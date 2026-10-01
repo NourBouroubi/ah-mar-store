@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>متجر أحمر — كتب إلكترونية تقرؤها في تطبيق أحمر</title>
+  <meta name="description" content="اشترِ كتبك الإلكترونية من متجر أحمر بالبطاقة الذهبية أو CIB، وتجدها فوراً في مكتبتك على تطبيق أحمر.">
+  <meta name="theme-color" content="#fbf6ec">
+  <meta property="og:title" content="متجر أحمر">
+  <meta property="og:description" content="كتب إلكترونية تشتريها هنا وتقرؤها في تطبيق أحمر.">
+  <meta property="og:image" content="https://store.ah-mar.app/assets/logo-192.png">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://backend.ah-mar.app" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header id="top"></header>
+  <main>
+    <section class="hero wrap">
+      <h1>كتب تشتريها هنا،<br><em>وتقرؤها في تطبيق أحمر.</em></h1>
+      <p>ادفع بالبطاقة الذهبية أو CIB، ويصل الكتاب إلى مكتبتك في التطبيق خلال ثوانٍ.</p>
+      <div class="steps">
+        <div class="step"><b>١</b>سجّل دخولك بحساب التطبيق نفسه</div>
+        <div class="step"><b>٢</b>اختر كتابك وادفع</div>
+        <div class="step"><b>٣</b>افتح التطبيق واقرأ</div>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="toolbar">
+        <label class="search">
+          <span id="search-icon"></span>
+          <input id="q" type="search" placeholder="ابحث عن كتاب أو كاتب" autocomplete="off" aria-label="بحث">
+        </label>
+        <div class="chips" id="cats" role="toolbar" aria-label="التصنيفات"></div>
+      </div>
+      <div class="grid" id="grid" aria-live="polite"></div>
+    </section>
+  </main>
+  <footer id="foot"></footer>
+
+  <script type="module">
+    import { mountLayout, getCatalog, getUser, getOwnedIds, coverUrl, bookUrl, formatPrice, esc, ICON } from "/assets/app.js";
+
+    mountLayout();
+    document.getElementById("search-icon").innerHTML = ICON.search;
+
+    const grid = document.getElementById("grid");
+    const cats = document.getElementById("cats");
+    const input = document.getElementById("q");
+    grid.innerHTML = Array.from({ length: 10 }, () =>
+      `<div class="card skeleton"><div class="cover"></div><div class="line" style="width:80%"></div><div class="line" style="width:45%"></div></div>`).join("");
+
+    let books = [], owned = new Set(), activeCat = "";
+    const norm = (s) => (s || "").toLowerCase().replace(/[ً-ْـ]/g, "").replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي");
+
+    function render() {
+      const term = norm(input.value.trim());
+      const list = books.filter((b) =>
+        (!activeCat || b.category?.$id === activeCat) &&
+        (!term || norm(b.title).includes(term) || norm(b.author).includes(term)));
+      if (!list.length) {
+        grid.innerHTML = `<div class="empty">لا توجد كتب مطابقة.</div>`;
+        return;
+      }
+      grid.innerHTML = list.map((b, i) => `
+        <a class="card" href="${bookUrl(b.id)}">
+          <div class="cover">
+            ${b.cover ? `<img src="${coverUrl(b.cover, 360)}" alt="${esc(b.title)}" ${i < 6 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" width="360" height="540">` : ""}
+            ${owned.has(b.id) ? `<span class="badge">في مكتبتك</span>` : ""}
+          </div>
+          <h3>${esc(b.title)}</h3>
+          ${b.author ? `<div class="author">${esc(b.author)}</div>` : ""}
+          <div class="price ${b.price ? "" : "free"}">${formatPrice(b.price)}</div>
+        </a>`).join("");
+    }
+
+    getCatalog().then((cat) => {
+      books = cat.books;
+      const used = new Set(books.map((b) => b.category?.$id).filter(Boolean));
+      const list = cat.categories.filter((c) => used.has(c.$id));
+      cats.innerHTML = `<button class="chip" aria-pressed="true" data-id="">الكل</button>` +
+        list.map((c) => `<button class="chip" aria-pressed="false" data-id="${esc(c.$id)}">${esc(c.name)}</button>`).join("");
+      render();
+    }).catch(() => {
+      grid.innerHTML = `<div class="empty">تعذّر تحميل الكتب. تحقّق من اتصالك ثم أعد تحميل الصفحة.</div>`;
+    });
+
+    getUser().then(getOwnedIds).then((ids) => { owned = ids; if (books.length) render(); });
+
+    cats.addEventListener("click", (e) => {
+      const btn = e.target.closest(".chip");
+      if (!btn) return;
+      activeCat = btn.dataset.id;
+      cats.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c === btn)));
+      render();
+    });
+    input.addEventListener("input", render);
+  </script>
+</body>
+</html>

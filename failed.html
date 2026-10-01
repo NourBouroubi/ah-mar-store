@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>لم يكتمل الدفع — متجر أحمر</title>
+  <meta name="theme-color" content="#fbf6ec">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://backend.ah-mar.app" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header id="top"></header>
+  <main class="wrap" id="main"><div class="panel"><div class="spinner" style="margin:24px auto"></div></div></main>
+  <footer id="foot"></footer>
+
+  <script type="module">
+    import { mountLayout, bookUrl, ICON } from "/assets/app.js";
+
+    mountLayout();
+    const first = (new URLSearchParams(location.search).get("books") || "").split(",")[0];
+    document.getElementById("main").innerHTML = `<div class="panel">
+      <div class="state-icon bad">${ICON.x}</div>
+      <h1>لم تكتمل عملية الدفع</h1>
+      <p>لم يُقتطع أي مبلغ. يمكنك المحاولة مرة أخرى أو اختيار بطاقة أخرى.</p>
+      <div class="stack">
+        ${first ? `<a class="btn btn-primary btn-block" href="${bookUrl(first)}">حاول مرة أخرى</a>` : ""}
+        <a class="btn btn-ghost btn-block" href="/">العودة إلى المتجر</a>
+      </div>
+    </div>`;
+  </script>
+</body>
+</html>

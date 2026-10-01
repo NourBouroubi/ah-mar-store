@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>حسابي — متجر أحمر</title>
+  <meta name="theme-color" content="#fbf6ec">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://backend.ah-mar.app" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header id="top"></header>
+  <main class="wrap" id="main"><div class="panel"><div class="spinner" style="margin:24px auto"></div></div></main>
+  <footer id="foot"></footer>
+
+  <script type="module">
+    import { mountLayout, getUser, getCatalog, getOwnedIds, signInWithGoogle, sendEmailCode, verifyEmailCode, signOut, coverUrl, openInAppUrl, bookUrl, esc, toast, ICON } from "/assets/app.js";
+
+    const main = document.getElementById("main");
+    const params = new URLSearchParams(location.search);
+
+    // Only same-site paths: an open redirect here would let any link
+    // bounce a signed-in buyer anywhere.
+    const rawNext = params.get("next") || "";
+    const next = /^\/(?!\/)/.test(rawNext) ? rawNext : "";
+
+    const user = await getUser();
+    mountLayout();
+    if (user && next) location.replace(next);
+    else if (user) showLibrary(user);
+    else showSignIn();
+
+    function showSignIn() {
+      main.innerHTML = `<div class="panel">
+        <img src="/assets/logo-192.png" alt="" width="64" height="64" style="margin:0 auto">
+        <h1>تسجيل الدخول</h1>
+        <p>استعمل الحساب نفسه الذي في تطبيق أحمر، ليصل كل كتاب تشتريه إلى مكتبتك هناك.</p>
+        ${params.get("error") ? `<p class="error">لم يكتمل تسجيل الدخول. حاول مرة أخرى.</p>` : ""}
+        <div class="stack">
+          <button class="btn btn-ghost btn-block" id="google">${ICON.google}المتابعة بحساب Google</button>
+        </div>
+        <div class="divider">أو برمز يصل إلى بريدك</div>
+        <form id="email-form" class="stack">
+          <div class="field"><label for="email">البريد الإلكتروني</label>
+            <input id="email" type="email" inputmode="email" autocomplete="email" required dir="ltr" placeholder="name@example.com"></div>
+          <button class="btn btn-primary btn-block" type="submit">أرسل الرمز</button>
+        </form>
+        <form id="code-form" class="stack hidden">
+          <p class="muted" id="sent-to" style="margin:0"></p>
+          <div class="field"><label for="code">الرمز المكوّن من 6 أرقام</label>
+            <input id="code" class="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required></div>
+          <button class="btn btn-primary btn-block" type="submit">تأكيد</button>
+          <button class="link" type="button" id="back">تغيير البريد</button>
+        </form>
+        <p class="error" id="err"></p>
+        <p class="muted" style="margin:6px 0 0">سجّلت في التطبيق بحساب Apple؟ استعمل البريد نفسه المرتبط بحسابك.</p>
+      </div>`;
+
+      const err = document.getElementById("err");
+      const emailForm = document.getElementById("email-form");
+      const codeForm = document.getElementById("code-form");
+      let pendingUserId = "";
+
+      document.getElementById("google").onclick = () =>
+        signInWithGoogle(new URL(next || "/account.html", location.origin).toString());
+
+      emailForm.onsubmit = async (e) => {
+        e.preventDefault();
+        err.textContent = "";
+        const btn = emailForm.querySelector("button");
+        const email = document.getElementById("email").value.trim();
+        btn.disabled = true;
+        try {
+          pendingUserId = await sendEmailCode(email);
+          document.getElementById("sent-to").textContent = `أرسلنا رمزاً إلى ${email}`;
+          emailForm.classList.add("hidden");
+          codeForm.classList.remove("hidden");
+          document.getElementById("code").focus();
+        } catch (ex) {
+          err.textContent = ex.code === 429 ? "محاولات كثيرة. انتظر دقيقة ثم أعد المحاولة." : "تعذّر إرسال الرمز. تحقّق من البريد وأعد المحاولة.";
+        } finally { btn.disabled = false; }
+      };
+
+      codeForm.onsubmit = async (e) => {
+        e.preventDefault();
+        err.textContent = "";
+        const btn = codeForm.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        try {
+          await verifyEmailCode(pendingUserId, document.getElementById("code").value.trim());
+          location.replace(next || "/account.html");
+        } catch {
+          err.textContent = "الرمز غير صحيح أو انتهت صلاحيته.";
+          btn.disabled = false;
+        }
+      };
+
+      document.getElementById("back").onclick = () => {
+        codeForm.classList.add("hidden");
+        emailForm.classList.remove("hidden");
+      };
+    }
+
+    async function showLibrary(user) {
+      main.innerHTML = `<div class="lib-head">
+          <div><h1>مكتبتي</h1><div class="muted">${esc(user.email || user.name || "")}</div></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <a class="btn btn-green btn-sm" href="${openInAppUrl()}">${ICON.phone}افتح التطبيق</a>
+            <button class="btn btn-ghost btn-sm" id="out">تسجيل الخروج</button>
+          </div>
+        </div>
+        <div class="grid" id="grid"><div class="empty"><div class="spinner" style="margin:auto"></div></div></div>`;
+
+      document.getElementById("out").onclick = async () => { await signOut(); location.replace("/"); };
+
+      const [ids, catalog] = await Promise.all([getOwnedIds(user), getCatalog().catch(() => ({ books: [] }))]);
+      const books = catalog.books.filter((b) => ids.has(b.id));
+      const grid = document.getElementById("grid");
+      if (!books.length) {
+        grid.innerHTML = `<div class="empty">مكتبتك فارغة حالياً.<br><a class="btn btn-primary" style="margin-top:16px" href="/">تصفّح الكتب</a></div>`;
+        return;
+      }
+      grid.innerHTML = books.map((b) => `
+        <div class="card">
+          <a class="cover" href="${bookUrl(b.id)}">${b.cover ? `<img src="${coverUrl(b.cover, 360)}" alt="${esc(b.title)}" loading="lazy" width="360" height="540">` : ""}</a>
+          <h3>${esc(b.title)}</h3>
+          <a class="btn btn-green btn-sm" href="${openInAppUrl(b.id)}">اقرأ في التطبيق</a>
+        </div>`).join("");
+    }
+  </script>
+</body>
+</html>
