@@ -21,12 +21,16 @@
   <header id="top"></header>
   <main>
     <section class="hero wrap">
-      <h1>كتب تشتريها هنا،<br><em>وتقرؤها في تطبيق أحمر.</em></h1>
-      <p>ادفع بالبطاقة الذهبية أو CIB، ويصل الكتاب إلى مكتبتك في التطبيق خلال ثوانٍ.</p>
+      <h1><span data-i18n="heroA"></span><br><em data-i18n="heroB"></em></h1>
+      <p data-i18n="heroP"></p>
       <div class="steps">
-        <div class="step"><b>١</b>سجّل دخولك بحساب التطبيق نفسه</div>
-        <div class="step"><b>٢</b>اختر كتابك وادفع</div>
-        <div class="step"><b>٣</b>افتح التطبيق واقرأ</div>
+        <div class="step"><b>1</b><span data-i18n="step1"></span></div>
+        <div class="step"><b>2</b><span data-i18n="step2"></span></div>
+        <div class="step"><b>3</b><span data-i18n="step3"></span></div>
+      </div>
+      <div class="ios-note" id="ios-note">
+        <span id="apple-icon"></span>
+        <div><b data-i18n="iosTitle"></b><p data-i18n="iosBody"></p></div>
       </div>
     </section>
 
@@ -34,9 +38,9 @@
       <div class="toolbar">
         <label class="search">
           <span id="search-icon"></span>
-          <input id="q" type="search" placeholder="ابحث عن كتاب أو كاتب" autocomplete="off" aria-label="بحث">
+          <input id="q" type="search" data-i18n-ph="search" autocomplete="off" aria-label="Search">
         </label>
-        <div class="chips" id="cats" role="toolbar" aria-label="التصنيفات"></div>
+        <div class="chips" id="cats" role="toolbar"></div>
       </div>
       <div class="grid" id="grid" aria-live="polite"></div>
     </section>
@@ -44,10 +48,13 @@
   <footer id="foot"></footer>
 
   <script type="module">
-    import { mountLayout, getCatalog, getUser, getOwnedIds, coverUrl, bookUrl, formatPrice, esc, ICON } from "/assets/app.js";
+    import { mountLayout, getCatalog, getUser, getOwnedIds, coverUrl, bookUrl, formatPrice, esc, ICON, t } from "/assets/app.js";
 
     mountLayout();
+    document.title = t("metaTitle");
     document.getElementById("search-icon").innerHTML = ICON.search;
+    document.getElementById("apple-icon").innerHTML = ICON.apple;
+    document.getElementById("cats").setAttribute("aria-label", t("categories"));
 
     const grid = document.getElementById("grid");
     const cats = document.getElementById("cats");
@@ -64,14 +71,14 @@
         (!activeCat || b.category?.$id === activeCat) &&
         (!term || norm(b.title).includes(term) || norm(b.author).includes(term)));
       if (!list.length) {
-        grid.innerHTML = `<div class="empty">لا توجد كتب مطابقة.</div>`;
+        grid.innerHTML = `<div class="empty">${t("noMatch")}</div>`;
         return;
       }
       grid.innerHTML = list.map((b, i) => `
         <a class="card" href="${bookUrl(b.id)}">
           <div class="cover">
             ${b.cover ? `<img src="${coverUrl(b.cover, 360)}" alt="${esc(b.title)}" ${i < 6 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" width="360" height="540">` : ""}
-            ${owned.has(b.id) ? `<span class="badge">في مكتبتك</span>` : ""}
+            ${owned.has(b.id) ? `<span class="badge">${t("inLibrary")}</span>` : ""}
           </div>
           <h3>${esc(b.title)}</h3>
           ${b.author ? `<div class="author">${esc(b.author)}</div>` : ""}
@@ -83,11 +90,11 @@
       books = cat.books;
       const used = new Set(books.map((b) => b.category?.$id).filter(Boolean));
       const list = cat.categories.filter((c) => used.has(c.$id));
-      cats.innerHTML = `<button class="chip" aria-pressed="true" data-id="">الكل</button>` +
+      cats.innerHTML = `<button class="chip" aria-pressed="true" data-id="">${t("all")}</button>` +
         list.map((c) => `<button class="chip" aria-pressed="false" data-id="${esc(c.$id)}">${esc(c.name)}</button>`).join("");
       render();
     }).catch(() => {
-      grid.innerHTML = `<div class="empty">تعذّر تحميل الكتب. تحقّق من اتصالك ثم أعد تحميل الصفحة.</div>`;
+      grid.innerHTML = `<div class="empty">${t("loadFail")}</div>`;
     });
 
     getUser().then(getOwnedIds).then((ids) => { owned = ids; if (books.length) render(); });

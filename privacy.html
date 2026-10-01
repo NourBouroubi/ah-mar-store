@@ -16,23 +16,32 @@
 <body>
   <header id="top"></header>
   <main class="wrap"><article class="prose">
-    <h1>سياسة الخصوصية</h1>
-    <p class="muted">آخر تحديث: أكتوبر 2026</p>
-    <h2>ما نجمعه</h2>
-    <ul>
-      <li>بيانات الحساب: الاسم والبريد الإلكتروني، أو ما يرسله Google عند الدخول به.</li>
-      <li>سجلّ المشتريات: الكتب التي اشتريتها وتاريخ ومبلغ كل عملية.</li>
-    </ul>
-    <h2>ما لا نجمعه</h2>
-    <p>لا نرى ولا نحفظ بيانات بطاقتك. الدفع يتم بالكامل على صفحة Chargily Pay، وهي التي تتعامل مع البطاقة والبنك.</p>
-    <h2>لماذا نستعملها</h2>
-    <p>لإضافة الكتب إلى مكتبتك في التطبيق، ولإرسال إيصال الشراء، وللردّ على طلبات الدعم. لا نبيع بياناتك ولا نشاركها لأغراض إعلانية.</p>
-    <h2>ملفات تعريف الارتباط</h2>
-    <p>نستعمل ملف تعريف ارتباط واحداً لإبقائك مسجّلاً، ولا نستعمل أي أداة تتبّع إعلاني.</p>
-    <h2>حذف الحساب</h2>
-    <p>يمكنك حذف حسابك من إعدادات التطبيق، أو بمراسلتنا على <a class="link" href="mailto:support@ah-mar.app">support@ah-mar.app</a>، فنحذف بياناتك خلال 30 يوماً.</p>
+    <section data-lang="ar">
+    <h1>سياسة الخصوصية</h1><p class="muted">آخر تحديث: أكتوبر 2026</p>
+    <h2>ما نجمعه</h2><ul><li>بيانات الحساب: الاسم والبريد الإلكتروني، أو ما يرسله Google عند الدخول به.</li><li>سجلّ المشتريات: الكتب التي اشتريتها وتاريخ ومبلغ كل عملية.</li></ul>
+    <h2>ما لا نجمعه</h2><p>لا نرى ولا نحفظ بيانات بطاقتك. الدفع يتم بالكامل على صفحة Chargily Pay.</p>
+    <h2>لماذا نستعملها</h2><p>لإضافة الكتب إلى مكتبتك، ولإرسال إيصال الشراء، وللردّ على طلبات الدعم. لا نبيع بياناتك ولا نشاركها لأغراض إعلانية.</p>
+    <h2>ملفات تعريف الارتباط</h2><p>نستعمل ملف تعريف ارتباط واحداً لإبقائك مسجّلاً، ولا نستعمل أي أداة تتبّع إعلاني.</p>
+    <h2>حذف الحساب</h2><p>يمكنك حذف حسابك من إعدادات التطبيق، أو بمراسلتنا على <a class="link" href="mailto:support@ah-mar.app">support@ah-mar.app</a>، فنحذف بياناتك خلال 30 يوماً.</p>
+    </section>
+    <section data-lang="fr" hidden>
+    <h1>Politique de confidentialité</h1><p class="muted">Dernière mise à jour : octobre 2026</p>
+    <h2>Ce que nous collectons</h2><ul><li>Données du compte : nom et adresse e-mail, ou ce que Google transmet lors de la connexion.</li><li>Historique d'achats : livres achetés, date et montant de chaque opération.</li></ul>
+    <h2>Ce que nous ne collectons pas</h2><p>Nous ne voyons ni ne conservons les données de votre carte. Le paiement se fait entièrement sur la page Chargily Pay.</p>
+    <h2>Pourquoi</h2><p>Pour ajouter les livres à votre bibliothèque, envoyer les reçus et répondre au support. Nous ne vendons pas vos données et ne les partageons pas à des fins publicitaires.</p>
+    <h2>Cookies</h2><p>Un seul cookie sert à garder votre session ouverte. Aucun traceur publicitaire.</p>
+    <h2>Suppression du compte</h2><p>Supprimez votre compte depuis les réglages de l'application, ou écrivez-nous à <a class="link" href="mailto:support@ah-mar.app">support@ah-mar.app</a> : vos données sont effacées sous 30 jours.</p>
+    </section>
+    <section data-lang="en" hidden>
+    <h1>Privacy policy</h1><p class="muted">Last updated: October 2026</p>
+    <h2>What we collect</h2><ul><li>Account data: your name and email address, or what Google shares when you sign in with it.</li><li>Purchase history: the books you bought, and the date and amount of each payment.</li></ul>
+    <h2>What we don't collect</h2><p>We never see or store your card details. Payment happens entirely on the Chargily Pay page.</p>
+    <h2>Why we use it</h2><p>To add books to your library, send receipts and answer support requests. We don't sell your data or share it for advertising.</p>
+    <h2>Cookies</h2><p>One cookie keeps you signed in. No advertising trackers.</p>
+    <h2>Deleting your account</h2><p>Delete your account from the app's settings, or email <a class="link" href="mailto:support@ah-mar.app">support@ah-mar.app</a>; your data is erased within 30 days.</p>
+    </section>
   </article></main>
   <footer id="foot"></footer>
-  <script type="module">import { mountLayout } from "/assets/app.js"; mountLayout();</script>
+  <script type="module">import { mountLayout, lang } from "/assets/app.js"; mountLayout(); document.title = ({"ar": "سياسة الخصوصية", "fr": "Politique de confidentialité", "en": "Privacy policy"})[lang];</script>
 </body>
 </html>

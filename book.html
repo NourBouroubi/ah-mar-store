@@ -24,7 +24,7 @@
   <footer id="foot"></footer>
 
   <script type="module">
-    import { mountLayout, getCatalog, getUser, getOwnedIds, startCheckout, coverUrl, formatPrice, openInAppUrl, esc, toast, ICON } from "/assets/app.js";
+    import { mountLayout, getCatalog, getUser, getOwnedIds, startCheckout, coverUrl, formatPrice, currency, openInAppUrl, esc, toast, ICON, t } from "/assets/app.js";
 
     mountLayout();
     const main = document.getElementById("main");
@@ -36,11 +36,11 @@
     if (!book) {
       main.innerHTML = `<div class="panel">
         <div class="state-icon bad">${ICON.x}</div>
-        <h1>الكتاب غير موجود</h1>
-        <p>ربما أُزيل من المتجر أو أن الرابط غير صحيح.</p>
-        <a class="btn btn-primary" href="/">تصفّح الكتب</a></div>`;
+        <h1>${t("notFound")}</h1>
+        <p>${t("notFoundP")}</p>
+        <a class="btn btn-primary" href="/">${t("browse")}</a></div>`;
     } else {
-      document.title = `${book.title} — متجر أحمر`;
+      document.title = `${book.title} — ${t("metaTitle").split(" — ")[0]}`;
       const owned = (await getOwnedIds(user)).has(book.id);
       render(owned);
     }
@@ -48,19 +48,19 @@
     function render(owned) {
       const meta = [
         book.category?.name,
-        book.pages ? `${book.pages} صفحة` : "",
-        "كتاب إلكتروني",
+        book.pages ? `${book.pages} ${t("pages")}` : "",
+        t("ebook"),
       ].filter(Boolean);
 
       main.innerHTML = `<div class="book">
         <div class="cover">${book.cover ? `<img src="${coverUrl(book.cover, 600)}" alt="${esc(book.title)}" fetchpriority="high" width="600" height="900">` : ""}</div>
         <div>
-          <div class="crumbs"><a href="/">المتجر</a>${book.category ? ` / ${esc(book.category.name)}` : ""}</div>
-          <h1>${esc(book.title)}</h1>
+          <div class="crumbs"><a href="/">${t("store")}</a>${book.category ? ` / ${esc(book.category.name)}` : ""}</div>
+          <h1 dir="auto">${esc(book.title)}</h1>
           ${book.author ? `<div class="by">${esc(book.author)}</div>` : ""}
           <div class="meta">${meta.map((m) => `<span>${esc(m)}</span>`).join("")}</div>
           <div class="buy-box" id="buy"></div>
-          ${book.description ? `<div class="desc"><h2>عن الكتاب</h2>${esc(book.description)}</div>` : ""}
+          ${book.description ? `<div class="desc"><h2>${t("about")}</h2><div dir="auto">${esc(book.description)}</div></div>` : ""}
         </div>
       </div>`;
       renderBuy(owned);
@@ -72,33 +72,34 @@
 
       if (owned) {
         box.innerHTML = `
-          <div class="owned">${ICON.check}<span>هذا الكتاب في مكتبتك</span></div>
-          <a class="btn btn-green btn-block" href="${openInAppUrl(book.id)}">${ICON.phone}اقرأه في تطبيق أحمر</a>
-          <p class="note" style="margin:10px 0 0">القراءة متاحة في التطبيق فقط، بالحساب نفسه.</p>`;
+          <div class="owned">${ICON.check}<span>${t("owned")}</span></div>
+          <a class="btn btn-green btn-block" href="${openInAppUrl(book.id)}">${ICON.phone}${t("readInApp")}</a>
+          <p class="note" style="margin:10px 0 0">${t("readOnlyApp")}</p>`;
         return;
       }
 
       const free = book.price <= 0;
-      const priceHtml = `<div class="amount">${free ? "مجاني" : `${formatPrice(book.price).replace(" دج", "")} <small>دج</small>`}</div>
-        <div class="note">${free ? "يُضاف إلى مكتبتك مجاناً ويبقى فيها." : "دفعة واحدة، والكتاب لك إلى الأبد."} يُقرأ في تطبيق أحمر.</div>`;
+      const priceHtml = `<div class="amount">${free ? t("free") : `${formatPrice(book.price).replace(" " + currency, "")} <small>${currency}</small>`}</div>
+        <div class="note">${free ? t("noteFree") : t("notePaid")}</div>`;
+      const iosMini = `<div class="ios-mini">${ICON.apple}<span>${t("iosShort")}</span></div>`;
 
       if (!user) {
         box.innerHTML = `${priceHtml}
-          <a class="btn btn-primary btn-block" href="/account.html?next=${next}">${free ? "سجّل الدخول لإضافته إلى مكتبتك" : "سجّل الدخول للشراء"}</a>
-          <p class="note" style="margin:10px 0 0">استعمل الحساب نفسه الذي في التطبيق، ليصل الكتاب إلى مكتبتك.</p>`;
+          <a class="btn btn-primary btn-block" href="/account.html?next=${next}">${free ? t("signInToAdd") : t("signInToBuy")}</a>
+          <p class="note" style="margin:10px 0 0">${t("sameAccount")}</p>${free ? "" : iosMini}`;
         return;
       }
 
       if (free) {
-        box.innerHTML = `${priceHtml}<button class="btn btn-green btn-block" id="go">أضفه إلى مكتبتي</button>`;
+        box.innerHTML = `${priceHtml}<button class="btn btn-green btn-block" id="go">${t("addToLibrary")}</button>`;
       } else {
         box.innerHTML = `${priceHtml}
-          <div class="methods" role="radiogroup" aria-label="طريقة الدفع">
-            <button class="method" role="radio" aria-checked="true" data-m="edahabia"><span class="dot"></span><span><b>الذهبية</b><small>بريد الجزائر</small></span></button>
-            <button class="method" role="radio" aria-checked="false" data-m="cib"><span class="dot"></span><span><b>CIB</b><small>البطاقة البنكية</small></span></button>
+          <div class="methods" role="radiogroup" aria-label="${esc(t("payMethod"))}">
+            <button class="method" role="radio" aria-checked="true" data-m="edahabia"><span class="dot"></span><span><b>${t("edahabia")}</b><small>${t("edahabiaSub")}</small></span></button>
+            <button class="method" role="radio" aria-checked="false" data-m="cib"><span class="dot"></span><span><b>CIB</b><small>${t("cibSub")}</small></span></button>
           </div>
-          <button class="btn btn-primary btn-block" id="go">ادفع ${formatPrice(book.price)}</button>
-          <div class="trust"><span>${ICON.lock}دفع آمن عبر Chargily</span><span>${ICON.bolt}يصل الكتاب فوراً</span></div>`;
+          <button class="btn btn-primary btn-block" id="go">${t("pay")} ${formatPrice(book.price)}</button>
+          <div class="trust"><span>${ICON.lock}${t("securePay")}</span><span>${ICON.bolt}${t("instant")}</span></div>${iosMini}`;
         box.querySelector(".methods").addEventListener("click", (e) => {
           const m = e.target.closest(".method");
           if (!m) return;
@@ -124,7 +125,7 @@
           go.innerHTML = label;
           if (e.type === "already_owned") { renderBuy(true); return; }
           if (e.code === 401) { location.href = `/account.html?next=${next}`; return; }
-          toast("تعذّر بدء الدفع. حاول مرة أخرى بعد قليل.");
+          toast(t("payFail"));
         }
       });
     }

@@ -20,7 +20,7 @@
   <footer id="foot"></footer>
 
   <script type="module">
-    import { mountLayout, getUser, getCatalog, getOwnedIds, signInWithGoogle, sendEmailCode, verifyEmailCode, signOut, coverUrl, openInAppUrl, bookUrl, esc, toast, ICON } from "/assets/app.js";
+    import { mountLayout, getUser, getCatalog, getOwnedIds, signInWithGoogle, sendEmailCode, verifyEmailCode, signOut, coverUrl, openInAppUrl, bookUrl, esc, toast, ICON, t } from "/assets/app.js";
 
     const main = document.getElementById("main");
     const params = new URLSearchParams(location.search);
@@ -30,6 +30,7 @@
     const rawNext = params.get("next") || "";
     const next = /^\/(?!\/)/.test(rawNext) ? rawNext : "";
 
+    document.title = `${t("myAccount")} — ${t("metaTitle").split(" — ")[0]}`;
     const user = await getUser();
     mountLayout();
     if (user && next) location.replace(next);
@@ -39,27 +40,27 @@
     function showSignIn() {
       main.innerHTML = `<div class="panel">
         <img src="/assets/logo-192.png" alt="" width="64" height="64" style="margin:0 auto">
-        <h1>تسجيل الدخول</h1>
-        <p>استعمل الحساب نفسه الذي في تطبيق أحمر، ليصل كل كتاب تشتريه إلى مكتبتك هناك.</p>
-        ${params.get("error") ? `<p class="error">لم يكتمل تسجيل الدخول. حاول مرة أخرى.</p>` : ""}
+        <h1>${t("signInTitle")}</h1>
+        <p>${t("signInP")}</p>
+        ${params.get("error") ? `<p class="error">${t("oauthError")}</p>` : ""}
         <div class="stack">
-          <button class="btn btn-ghost btn-block" id="google">${ICON.google}المتابعة بحساب Google</button>
+          <button class="btn btn-ghost btn-block" id="google">${ICON.google}${t("google")}</button>
         </div>
-        <div class="divider">أو برمز يصل إلى بريدك</div>
+        <div class="divider">${t("orEmail")}</div>
         <form id="email-form" class="stack">
-          <div class="field"><label for="email">البريد الإلكتروني</label>
+          <div class="field"><label for="email">${t("email")}</label>
             <input id="email" type="email" inputmode="email" autocomplete="email" required dir="ltr" placeholder="name@example.com"></div>
-          <button class="btn btn-primary btn-block" type="submit">أرسل الرمز</button>
+          <button class="btn btn-primary btn-block" type="submit">${t("sendCode")}</button>
         </form>
         <form id="code-form" class="stack hidden">
           <p class="muted" id="sent-to" style="margin:0"></p>
-          <div class="field"><label for="code">الرمز المكوّن من 6 أرقام</label>
+          <div class="field"><label for="code">${t("codeLabel")}</label>
             <input id="code" class="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required></div>
-          <button class="btn btn-primary btn-block" type="submit">تأكيد</button>
-          <button class="link" type="button" id="back">تغيير البريد</button>
+          <button class="btn btn-primary btn-block" type="submit">${t("confirm")}</button>
+          <button class="link" type="button" id="back">${t("changeEmail")}</button>
         </form>
         <p class="error" id="err"></p>
-        <p class="muted" style="margin:6px 0 0">سجّلت في التطبيق بحساب Apple؟ استعمل البريد نفسه المرتبط بحسابك.</p>
+        <p class="muted" style="margin:6px 0 0">${t("appleHint")}</p>
       </div>`;
 
       const err = document.getElementById("err");
@@ -78,12 +79,12 @@
         btn.disabled = true;
         try {
           pendingUserId = await sendEmailCode(email);
-          document.getElementById("sent-to").textContent = `أرسلنا رمزاً إلى ${email}`;
+          document.getElementById("sent-to").textContent = `${t("sentTo")} ${email}`;
           emailForm.classList.add("hidden");
           codeForm.classList.remove("hidden");
           document.getElementById("code").focus();
         } catch (ex) {
-          err.textContent = ex.code === 429 ? "محاولات كثيرة. انتظر دقيقة ثم أعد المحاولة." : "تعذّر إرسال الرمز. تحقّق من البريد وأعد المحاولة.";
+          err.textContent = ex.code === 429 ? t("tooMany") : t("sendFail");
         } finally { btn.disabled = false; }
       };
 
@@ -96,7 +97,7 @@
           await verifyEmailCode(pendingUserId, document.getElementById("code").value.trim());
           location.replace(next || "/account.html");
         } catch {
-          err.textContent = "الرمز غير صحيح أو انتهت صلاحيته.";
+          err.textContent = t("badCode");
           btn.disabled = false;
         }
       };
@@ -109,10 +110,10 @@
 
     async function showLibrary(user) {
       main.innerHTML = `<div class="lib-head">
-          <div><h1>مكتبتي</h1><div class="muted">${esc(user.email || user.name || "")}</div></div>
+          <div><h1>${t("myLibrary")}</h1><div class="muted">${esc(user.email || user.name || "")}</div></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <a class="btn btn-green btn-sm" href="${openInAppUrl()}">${ICON.phone}افتح التطبيق</a>
-            <button class="btn btn-ghost btn-sm" id="out">تسجيل الخروج</button>
+            <a class="btn btn-green btn-sm" href="${openInAppUrl()}">${ICON.phone}${t("openApp")}</a>
+            <button class="btn btn-ghost btn-sm" id="out">${t("signOut")}</button>
           </div>
         </div>
         <div class="grid" id="grid"><div class="empty"><div class="spinner" style="margin:auto"></div></div></div>`;
@@ -123,14 +124,14 @@
       const books = catalog.books.filter((b) => ids.has(b.id));
       const grid = document.getElementById("grid");
       if (!books.length) {
-        grid.innerHTML = `<div class="empty">مكتبتك فارغة حالياً.<br><a class="btn btn-primary" style="margin-top:16px" href="/">تصفّح الكتب</a></div>`;
+        grid.innerHTML = `<div class="empty">${t("emptyLib")}<br><a class="btn btn-primary" style="margin-top:16px" href="/">${t("browse")}</a></div>`;
         return;
       }
       grid.innerHTML = books.map((b) => `
         <div class="card">
           <a class="cover" href="${bookUrl(b.id)}">${b.cover ? `<img src="${coverUrl(b.cover, 360)}" alt="${esc(b.title)}" loading="lazy" width="360" height="540">` : ""}</a>
-          <h3>${esc(b.title)}</h3>
-          <a class="btn btn-green btn-sm" href="${openInAppUrl(b.id)}">اقرأ في التطبيق</a>
+          <h3 dir="auto">${esc(b.title)}</h3>
+          <a class="btn btn-green btn-sm" href="${openInAppUrl(b.id)}">${t("readApp")}</a>
         </div>`).join("");
     }
   </script>

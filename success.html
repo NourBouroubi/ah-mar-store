@@ -20,9 +20,10 @@
   <footer id="foot"></footer>
 
   <script type="module">
-    import { mountLayout, getUser, getCatalog, getOwnedIds, openInAppUrl, bookUrl, coverUrl, esc, ICON } from "/assets/app.js";
+    import { mountLayout, getUser, getCatalog, getOwnedIds, openInAppUrl, bookUrl, coverUrl, esc, ICON, t } from "/assets/app.js";
 
     mountLayout();
+    document.title = t("bought");
     const main = document.getElementById("main");
     const params = new URLSearchParams(location.search);
     const ids = (params.get("books") || "").split(",").filter(Boolean);
@@ -38,15 +39,12 @@
       main.innerHTML = `<div class="panel">
         ${cover ? `<img src="${coverUrl(cover, 240)}" alt="" width="120" height="180" style="width:120px;border-radius:8px;margin:0 auto 18px;box-shadow:0 8px 24px rgba(0,0,0,.15)">` : ""}
         <div class="state-icon ${done ? "ok" : "wait"}">${done ? ICON.check : `<div class="spinner"></div>`}</div>
-        <h1>${done ? "تمّ! الكتاب في مكتبتك" : state === "slow" ? "تمّ الدفع، والكتاب في الطريق" : "نؤكّد الدفع…"}</h1>
-        <p>${done
-          ? `${titles.length ? `«${esc(titles.map((t) => t.title).join("» و«"))}» ` : ""}ينتظرك الآن في تطبيق أحمر. افتح التطبيق بالحساب نفسه وابدأ القراءة.`
-          : state === "slow"
-          ? "قد يستغرق التأكيد دقيقة. سيظهر الكتاب في مكتبتك داخل التطبيق تلقائياً، ولا حاجة للدفع مرة أخرى."
-          : "لحظات فقط، لا تغلق الصفحة."}</p>
+        <h1>${done ? t("doneTitle") : state === "slow" ? t("slowTitle") : t("waitTitle")}</h1>
+        ${done && titles.length ? `<p dir="auto" style="margin-bottom:6px"><b>${esc(titles.map((b) => b.title).join(" · "))}</b></p>` : ""}
+        <p>${done ? t("doneP") : state === "slow" ? t("slowP") : t("waitP")}</p>
         <div class="stack">
-          <a class="btn btn-green btn-block" href="${openInAppUrl(first)}">${ICON.phone}العودة إلى التطبيق</a>
-          <a class="btn btn-ghost btn-block" href="/account.html">مكتبتي</a>
+          <a class="btn btn-green btn-block" href="${openInAppUrl(first)}">${ICON.phone}${t("backToApp")}</a>
+          <a class="btn btn-ghost btn-block" href="/account.html">${t("myLibrary")}</a>
         </div>
       </div>`;
     }

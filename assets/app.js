@@ -2,6 +2,9 @@
 // No framework, no SDK: a few REST calls to the same Appwrite project the app
 // uses, so the account, the library and the payments are all shared.
 
+import { t, lang, LANGS, setLang, applyStatic } from "/assets/i18n.js";
+export { t, lang };
+
 export const CFG = {
   endpoint: "https://backend.ah-mar.app/v1",
   project: "6966d5030009343737c1",
@@ -107,13 +110,24 @@ export function getCatalog() {
   if (!catalogPromise) {
     // The cache is regenerated every few minutes; one fetch per 5-minute
     // window keeps it fresh and lets the edge cache serve everyone else.
+    // store_cache deletes the file before writing the new one, and the edge
+    // caches the 404 it serves in that gap for the whole window -- so a miss
+    // is retried under a URL nobody else has asked for.
     const bucket = Math.floor(Date.now() / 300000);
-    catalogPromise = fetch(`${CFG.cacheUrl}&t=${bucket}`)
-      .then((r) => { if (!r.ok) throw new Error("catalog"); return r.json(); })
+    const load = (t) => fetch(`${CFG.cacheUrl}&t=${t}`).then((r) => {
+      if (!r.ok) throw new Error("catalog " + r.status);
+      return r.json();
+    });
+    const retry = (n) => new Promise((ok) => setTimeout(ok, 1200 * n))
+      .then(() => load(`${bucket}r${Date.now()}`));
+    catalogPromise = load(bucket)
+      .catch(() => retry(1))
+      .catch(() => retry(2))
       .then((d) => ({
         books: (d.books || []).map(normalizeBook),
         categories: d.categories || [],
       }));
+    catalogPromise.catch(() => { catalogPromise = null; });
   }
   return catalogPromise;
 }
@@ -173,9 +187,10 @@ export function coverUrl(fileId, width = 400) {
 export const bookUrl = (id) => `/book.html?id=${encodeURIComponent(id)}`;
 export const openInAppUrl = (bookId) => (bookId ? `${CFG.appLink}/b/${encodeURIComponent(bookId)}` : CFG.appLink);
 
-const nf = new Intl.NumberFormat("ar-DZ");
+const nf = new Intl.NumberFormat(lang === "ar" ? "ar-DZ" : lang === "fr" ? "fr-DZ" : "en-US");
+export const currency = lang === "ar" ? "دج" : "DA";
 export function formatPrice(dzd) {
-  return dzd > 0 ? `${nf.format(dzd)} دج` : "مجاني";
+  return dzd > 0 ? `${nf.format(dzd)} ${currency}` : t("free");
 }
 
 export function esc(s) {
@@ -197,6 +212,7 @@ export const ICON = {
   x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
   lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
   phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>',
+  apple: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1zM13.9 5c.7-.9 1.2-2.1 1.1-3.3-1 0-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.2 1.1.1 2.3-.6 3-1.5z"/></svg>',
   bolt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>',
   google: '<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.2-2.1 3.5-5.1 3.5-8.7z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6H1.3a12 12 0 0 0 0 10.8z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.3 6.6l4 3.1c.9-2.8 3.6-4.9 6.7-4.9z"/></svg>',
 };
@@ -206,28 +222,33 @@ export const ICON = {
 /* ------------------------------------------------------------------ */
 
 export async function mountLayout() {
+  applyStatic();
   const top = document.getElementById("top");
   if (top) {
     top.className = "top";
     top.innerHTML = `<div class="wrap">
-      <a class="brand" href="/"><img src="/assets/logo-192.png" alt="" width="36" height="36"><div>أحمر<small>المتجر</small></div></a>
+      <a class="brand" href="/"><img src="/assets/logo-192.png" alt="" width="36" height="36"><div>${lang === "ar" ? "أحمر" : "Ahmar"}<small>${t("store")}</small></div></a>
       <div class="spacer"></div>
-      <a id="nav-user" class="btn btn-ghost btn-sm" href="/account.html">تسجيل الدخول</a>
+      <label class="lang-pick"><span class="sr">Language</span>
+        <select id="lang" aria-label="Language">${Object.entries(LANGS).map(([c, n]) => `<option value="${c}" ${c === lang ? "selected" : ""}>${n}</option>`).join("")}</select>
+      </label>
+      <a id="nav-user" class="btn btn-ghost btn-sm" href="/account.html">${t("signIn")}</a>
     </div>`;
+    document.getElementById("lang").onchange = (e) => setLang(e.target.value);
     getUser().then((user) => {
       if (!user) return;
       const nav = document.getElementById("nav-user");
-      const name = user.name || user.email || "حسابي";
-      nav.outerHTML = `<a class="user-chip" href="/account.html" title="مكتبتي"><span class="avatar">${esc(name.trim()[0] || "؟")}</span><span>${esc(name)}</span></a>`;
+      const name = user.name || user.email || t("myAccount");
+      nav.outerHTML = `<a class="user-chip" href="/account.html" title="${esc(t("myLibrary"))}"><span class="avatar">${esc(name.trim()[0] || "?")}</span><span>${esc(name)}</span></a>`;
     });
   }
   const foot = document.getElementById("foot");
   if (foot) {
     foot.className = "foot";
     foot.innerHTML = `<div class="wrap">
-      <div>© ${new Date().getFullYear()} أحمر — الكتب تُشترى هنا وتُقرأ في التطبيق.</div>
-      <nav><a href="/terms.html">الشروط</a><a href="/privacy.html">الخصوصية</a><a href="/refund.html">الاسترجاع</a><a href="/contact.html">تواصل معنا</a></nav>
-      <div class="pay-logos" aria-label="وسائل الدفع"><span>الذهبية</span><span>CIB</span></div>
+      <div>© ${new Date().getFullYear()} ${lang === "ar" ? "أحمر" : "Ahmar"} — ${t("footerLine")}</div>
+      <nav><a href="/terms.html">${t("terms")}</a><a href="/privacy.html">${t("privacy")}</a><a href="/refund.html">${t("refund")}</a><a href="/contact.html">${t("contact")}</a></nav>
+      <div class="pay-logos" aria-label="${esc(t("payMethods"))}"><span>${t("edahabia")}</span><span>CIB</span></div>
     </div>`;
   }
 }

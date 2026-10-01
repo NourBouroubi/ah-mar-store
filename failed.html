@@ -20,17 +20,18 @@
   <footer id="foot"></footer>
 
   <script type="module">
-    import { mountLayout, bookUrl, ICON } from "/assets/app.js";
+    import { mountLayout, bookUrl, ICON, t } from "/assets/app.js";
 
     mountLayout();
+    document.title = t("failTitle");
     const first = (new URLSearchParams(location.search).get("books") || "").split(",")[0];
     document.getElementById("main").innerHTML = `<div class="panel">
       <div class="state-icon bad">${ICON.x}</div>
-      <h1>لم تكتمل عملية الدفع</h1>
-      <p>لم يُقتطع أي مبلغ. يمكنك المحاولة مرة أخرى أو اختيار بطاقة أخرى.</p>
+      <h1>${t("failTitle")}</h1>
+      <p>${t("failP")}</p>
       <div class="stack">
-        ${first ? `<a class="btn btn-primary btn-block" href="${bookUrl(first)}">حاول مرة أخرى</a>` : ""}
-        <a class="btn btn-ghost btn-block" href="/">العودة إلى المتجر</a>
+        ${first ? `<a class="btn btn-primary btn-block" href="${bookUrl(first)}">${t("tryAgain")}</a>` : ""}
+        <a class="btn btn-ghost btn-block" href="/">${t("backToStore")}</a>
       </div>
     </div>`;
   </script>

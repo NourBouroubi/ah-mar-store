@@ -20,14 +20,15 @@
   <footer id="foot"></footer>
 
   <script type="module">
-    import { mountLayout, ICON } from "/assets/app.js";
+    import { mountLayout, ICON, t } from "/assets/app.js";
 
     mountLayout();
+    document.title = t("pageMissing");
     document.getElementById("main").innerHTML = `<div class="panel">
       <div class="state-icon bad">${ICON.x}</div>
-      <h1>الصفحة غير موجودة</h1>
-      <p>ربما تغيّر الرابط أو أُزيلت الصفحة.</p>
-      <a class="btn btn-primary" href="/">العودة إلى المتجر</a>
+      <h1>${t("pageMissing")}</h1>
+      <p>${t("pageMissingP")}</p>
+      <a class="btn btn-primary" href="/">${t("backToStore")}</a>
     </div>`;
   </script>
 </body>
