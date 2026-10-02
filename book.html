@@ -24,7 +24,7 @@
   <footer id="foot"></footer>
 
   <script type="module">
-    import { mountLayout, getCatalog, getUser, getOwnedIds, startCheckout, coverUrl, formatPrice, currency, openInAppUrl, esc, toast, ICON, t } from "/assets/app.js";
+    import { mountLayout, getCatalog, getUser, getOwnedIds, startCheckout, coverUrl, formatPrice, currency, openInAppUrl, esc, toast, ICON, t, usdCents, formatUsd, paddleEnabled, loadPaddle, lang } from "/assets/app.js";
 
     mountLayout();
     const main = document.getElementById("main");
@@ -97,13 +97,19 @@
           <div class="methods" role="radiogroup" aria-label="${esc(t("payMethod"))}">
             <button class="method" role="radio" aria-checked="true" data-m="edahabia"><span class="dot"></span><span><b>${t("edahabia")}</b><small>${t("edahabiaSub")}</small></span></button>
             <button class="method" role="radio" aria-checked="false" data-m="cib"><span class="dot"></span><span><b>CIB</b><small>${t("cibSub")}</small></span></button>
+            ${paddleEnabled() ? `<button class="method method-wide" role="radio" aria-checked="false" data-m="paddle"><span class="dot"></span><span><b>${t("cardIntl")} · ${formatUsd(usdCents(book.price))}</b><small>${t("cardIntlSub")}</small></span></button>` : ""}
           </div>
           <button class="btn btn-primary btn-block" id="go">${t("pay")} ${formatPrice(book.price)}</button>
-          <div class="trust"><span>${ICON.lock}${t("securePay")}</span><span>${ICON.bolt}${t("instant")}</span></div>${iosMini}`;
+          <div class="trust" id="trust"><span>${ICON.lock}${t("securePay")}</span><span>${ICON.bolt}${t("instant")}</span></div>
+          <p class="note hidden" id="paddle-note" style="margin:10px 0 0">${t("paddleNote")}</p>${iosMini}`;
         box.querySelector(".methods").addEventListener("click", (e) => {
           const m = e.target.closest(".method");
           if (!m) return;
           box.querySelectorAll(".method").forEach((x) => x.setAttribute("aria-checked", String(x === m)));
+          const card = m.dataset.m === "paddle";
+          document.getElementById("go").textContent = `${t("pay")} ${card ? formatUsd(usdCents(book.price)) : formatPrice(book.price)}`;
+          document.getElementById("trust").firstElementChild.innerHTML = `${ICON.lock}${card ? t("securePaddle") : t("securePay")}`;
+          document.getElementById("paddle-note").classList.toggle("hidden", !card);
         });
       }
 
@@ -115,6 +121,20 @@
         go.innerHTML = `<span class="spinner" style="width:20px;height:20px;border-width:2px"></span>`;
         try {
           const res = await startCheckout([book.id], method);
+          if (res.paddle_transaction_id) {
+            const Paddle = await loadPaddle();
+            Paddle.Checkout.open({
+              transactionId: res.paddle_transaction_id,
+              settings: {
+                displayMode: "overlay",
+                locale: lang,
+                successUrl: `${location.origin}/success.html?books=${encodeURIComponent(book.id)}`,
+              },
+            });
+            go.disabled = false;
+            go.innerHTML = label;
+            return;
+          }
           if (res.checkout_url) {
             location.href = res.checkout_url;
             return;

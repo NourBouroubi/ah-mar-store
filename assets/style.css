@@ -255,3 +255,5 @@ main { flex: 1; }
 .ios-mini { display: flex; gap: 8px; align-items: flex-start; font-size: .85rem; color: var(--ink-2); margin-top: 12px; }
 .ios-mini svg { width: 16px; height: 16px; flex: none; margin-top: 3px; }
 @media (max-width: 480px) { .brand small { display: none; } .user-chip { max-width: 130px; } }
+
+.method-wide { grid-column: 1 / -1; }
