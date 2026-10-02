@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="/assets/style.css?v=20261002b">
+  <link rel="stylesheet" href="/assets/style.css?v=20261002c">
 </head>
 <body>
   <header id="top"></header>
@@ -48,12 +48,12 @@
   <footer id="foot"></footer>
 
   <script type="module">
-    import { mountLayout, getCatalog, getUser, getOwnedIds, coverUrl, bookUrl, formatPrice, esc, ICON, t } from "/assets/app.js?v=20261002b";
+    import { mountLayout, getCatalog, getUser, getOwnedIds, coverUrl, bookUrl, formatPrice, esc, ICON, t } from "/assets/app.js?v=20261002c";
 
     mountLayout();
     document.title = t("metaTitle");
     document.getElementById("search-icon").innerHTML = ICON.search;
-    document.getElementById("apple-icon").innerHTML = ICON.apple;
+    document.getElementById("apple-icon").innerHTML = ICON.phone;
     document.getElementById("cats").setAttribute("aria-label", t("categories"));
 
     const grid = document.getElementById("grid");

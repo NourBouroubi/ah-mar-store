@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="/assets/style.css?v=20261002b">
+  <link rel="stylesheet" href="/assets/style.css?v=20261002c">
 </head>
 <body>
   <header id="top"></header>
@@ -24,7 +24,7 @@
   <footer id="foot"></footer>
 
   <script type="module">
-    import { mountLayout, getCatalog, getUser, getOwnedIds, startCheckout, coverUrl, formatPrice, currency, openInAppUrl, esc, toast, ICON, t, usdCents, formatUsd, paddleEnabled, loadPaddle, lang } from "/assets/app.js?v=20261002b";
+    import { mountLayout, getCatalog, getUser, getOwnedIds, startCheckout, coverUrl, formatPrice, currency, openInAppUrl, esc, toast, ICON, t, usdCents, formatUsd, paddleEnabled, loadPaddle, lang } from "/assets/app.js?v=20261002c";
 
     mountLayout();
     const main = document.getElementById("main");
@@ -81,7 +81,7 @@
       const free = book.price <= 0;
       const priceHtml = `<div class="amount">${free ? t("free") : `${formatPrice(book.price).replace(" " + currency, "")} <small>${currency}</small>`}</div>
         <div class="note">${free ? t("noteFree") : t("notePaid")}</div>`;
-      const iosMini = `<div class="ios-mini">${ICON.apple}<span>${t("iosShort")}</span></div>`;
+      const iosMini = `<div class="ios-mini">${ICON.phone}<span>${t("iosShort")}</span></div>`;
 
       if (!user && free) {
         box.innerHTML = `${priceHtml}
