@@ -15,7 +15,7 @@ export const CFG = {
   cacheUrl: "https://backend.ah-mar.app/v1/storage/buckets/store_cache/files/store_cache_v1/view?project=6966d5030009343737c1",
   appLink: "https://link.ah-mar.app",
   // Card payments through Paddle (merchant of record). Empty token = hidden.
-  paddle: { token: "", environment: "production" },
+  paddle: { token: "live_2d66e79c9816e55569ef3c09ebe", environment: "production" },
 };
 
 /* ------------------------------------------------------------------ */
