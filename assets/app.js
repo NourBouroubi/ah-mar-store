@@ -2,7 +2,7 @@
 // No framework, no SDK: a few REST calls to the same Appwrite project the app
 // uses, so the account, the library and the payments are all shared.
 
-import { t, lang, LANGS, setLang, applyStatic } from "/assets/i18n.js";
+import { t, lang, LANGS, setLang, applyStatic } from "/assets/i18n.js?v=20261002b";
 export { t, lang };
 
 export const CFG = {
