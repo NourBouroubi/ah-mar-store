@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>الدفع — متجر أحمر</title>
+  <meta name="theme-color" content="#fbf6ec">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://backend.ah-mar.app" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header id="top"></header>
+  <main class="wrap" id="main"><div class="panel"><div class="spinner" style="margin:24px auto"></div></div></main>
+  <footer id="foot"></footer>
+
+  <script type="module">
+    // Paddle's "default payment link". A transaction's checkout URL lands here
+    // with ?_ptxn=<transaction id>; Paddle.js opens that checkout by itself
+    // once initialised.
+    import { mountLayout, loadPaddle, ICON, t } from "/assets/app.js";
+
+    mountLayout();
+    document.title = t("waitTitle");
+    const txn = new URLSearchParams(location.search).get("_ptxn");
+    const main = document.getElementById("main");
+    if (!txn) {
+      location.replace("/");
+    } else {
+      try {
+        await loadPaddle();
+      } catch {
+        main.innerHTML = `<div class="panel"><div class="state-icon bad">${ICON.x}</div>
+          <h1>${t("failTitle")}</h1><p>${t("payFail")}</p>
+          <a class="btn btn-ghost btn-block" href="/">${t("backToStore")}</a></div>`;
+      }
+    }
+  </script>
+</body>
+</html>
