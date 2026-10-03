@@ -151,6 +151,7 @@ const D = {
   writeComment: { ar: "اكتب تعليقاً…", fr: "Écrire un commentaire…", en: "Write a comment…" },
   send: { ar: "إرسال", fr: "Envoyer", en: "Send" },
   signInToComment: { ar: "سجّل الدخول للتعليق", fr: "Connectez-vous pour commenter", en: "Sign in to comment" },
+  signInToListen: { ar: "سجّل الدخول للاستماع إلى البث", fr: "Connectez-vous pour écouter la diffusion", en: "Sign in to listen to the broadcast" },
   signInToWatch: { ar: "سجّل الدخول لمشاهدة التسجيل", fr: "Connectez-vous pour regarder l'enregistrement", en: "Sign in to watch the recording" },
   recordingFailed: { ar: "تعذّر تشغيل التسجيل.", fr: "Lecture impossible.", en: "Couldn't play the recording." },
   noComments: { ar: "لا تعليقات بعد", fr: "Pas encore de commentaires", en: "No comments yet" },

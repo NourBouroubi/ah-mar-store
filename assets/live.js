@@ -7,7 +7,7 @@
 //  * reaction  -> atomic increment on live_reaction_counts
 //  * presence  -> heartbeat upsert in live_presence (doc id = user id)
 
-import { CFG, api, getUser, getCatalog, getOwnedIds, signInWithGoogle, esc, toast, t, lang } from "/assets/app.js?v=20261003a";
+import { CFG, api, getUser, getCatalog, getOwnedIds, signInWithGoogle, esc, toast, t, lang } from "/assets/app.js?v=20261003b";
 
 const STREAM_SDK = "https://cdn.jsdelivr.net/npm/@stream-io/video-client@1.61.1/+esm";
 const COL = {
@@ -317,6 +317,11 @@ function startLive(s, user) {
   // ---- audio / video ----
   if (!isStreamChannel(s.channel_name) || !s.token) {
     overlay(`<div><p>${t("liveAppOnly")}</p></div>`);
+    return;
+  }
+  if (!user) {
+    overlay(`<div><p>${t("signInToListen")}</p><button class="btn btn-primary" id="login2">${t("signIn")}</button></div>`);
+    document.getElementById("login2").onclick = () => signInWithGoogle(location.href);
     return;
   }
   overlay(`<button class="btn btn-primary listen" id="listen">▶ ${t("listen")}</button>`);
