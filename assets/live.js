@@ -7,9 +7,14 @@
 //  * reaction  -> atomic increment on live_reaction_counts
 //  * presence  -> heartbeat upsert in live_presence (doc id = user id)
 
-import { CFG, api, getUser, getCatalog, getOwnedIds, signInWithGoogle, esc, toast, t, lang } from "/assets/app.js?v=20261003b";
+import { CFG, api, getUser, getCatalog, getOwnedIds, signInWithGoogle, esc, toast, t, lang } from "/assets/app.js?v=20261003c";
 
-const STREAM_SDK = "https://cdn.jsdelivr.net/npm/@stream-io/video-client@1.61.1/+esm";
+// Self-hosted: jsDelivr's own +esm build of this SDK imports
+// "/npm/sdp-transform@2.15.0/+esm", which jsDelivr cannot build (404 -- the
+// package's main is a directory), so the import failed in every browser and no
+// one on the web could listen. The copy points that import at the file path
+// jsDelivr does build; everything else still loads from jsDelivr.
+const STREAM_SDK = "/assets/vendor/stream-video-client-1.61.1.js";
 const COL = {
   streams: "live_streams",
   comments: "live_stream_commentslive_stream_comm",
