@@ -2,7 +2,7 @@
 // No framework, no SDK: a few REST calls to the same Appwrite project the app
 // uses, so the account, the library and the payments are all shared.
 
-import { t, lang, LANGS, setLang, applyStatic } from "/assets/i18n.js?v=20261002c";
+import { t, lang, LANGS, setLang, applyStatic } from "/assets/i18n.js?v=20261003a";
 export { t, lang };
 
 export const CFG = {
@@ -257,12 +257,17 @@ export async function mountLayout() {
     top.innerHTML = `<div class="wrap">
       <a class="brand" href="/"><img src="/assets/logo-192.png" alt="" width="36" height="36"><div>${lang === "ar" ? "أحمر" : "Ahmar"}<small>${t("store")}</small></div></a>
       <div class="spacer"></div>
+      <a class="nav-live" id="nav-live" href="/live.html"><i></i>${t("live")}</a>
       <label class="lang-pick"><span class="sr">Language</span>
         <select id="lang" aria-label="Language">${Object.entries(LANGS).map(([c, n]) => `<option value="${c}" ${c === lang ? "selected" : ""}>${n}</option>`).join("")}</select>
       </label>
       <a id="nav-user" class="btn btn-ghost btn-sm" href="/account.html">${t("signIn")}</a>
     </div>`;
     document.getElementById("lang").onchange = (e) => setLang(e.target.value);
+    // Pulse the Live link while something is on air.
+    api(`/databases/${CFG.db}/collections/live_streams/documents`, {
+      query: { queries: [q("equal", "status", ["live"]), JSON.stringify({ method: "limit", values: [1] })] },
+    }).then((r) => { if (r.total > 0) document.getElementById("nav-live")?.classList.add("on"); }).catch(() => {});
     getUser().then((user) => {
       if (!user) return;
       const nav = document.getElementById("nav-user");

@@ -3,12 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>لم يكتمل الدفع — متجر أحمر</title>
+  <title>البث المباشر — أحمر</title>
+  <meta name="description" content="استمع إلى بث أحمر المباشر وشارك في التعليقات، أو أعد مشاهدة التسجيلات.">
   <meta name="theme-color" content="#fbf6ec">
-  <meta name="robots" content="noindex">
+  <meta property="og:title" content="البث المباشر — أحمر">
+  <meta property="og:image" content="https://store.ah-mar.app/assets/logo-192.png">
   <link rel="icon" href="/assets/favicon.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
   <link rel="preconnect" href="https://backend.ah-mar.app" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
@@ -16,24 +19,13 @@
 </head>
 <body>
   <header id="top"></header>
-  <main class="wrap" id="main"><div class="panel"><div class="spinner" style="margin:24px auto"></div></div></main>
+  <main class="wrap" id="live"><div class="panel"><div class="spinner" style="margin:24px auto"></div></div></main>
   <footer id="foot"></footer>
-
   <script type="module">
-    import { mountLayout, bookUrl, ICON, t } from "/assets/app.js?v=20261003a";
-
+    import { mountLayout, t } from "/assets/app.js?v=20261003a";
     mountLayout();
-    document.title = t("failTitle");
-    const first = (new URLSearchParams(location.search).get("books") || "").split(",")[0];
-    document.getElementById("main").innerHTML = `<div class="panel">
-      <div class="state-icon bad">${ICON.x}</div>
-      <h1>${t("failTitle")}</h1>
-      <p>${t("failP")}</p>
-      <div class="stack">
-        ${first ? `<a class="btn btn-primary btn-block" href="${bookUrl(first)}">${t("tryAgain")}</a>` : ""}
-        <a class="btn btn-ghost btn-block" href="/">${t("backToStore")}</a>
-      </div>
-    </div>`;
+    document.title = t("liveTitle") + " — " + (document.documentElement.lang === "ar" ? "أحمر" : "Ahmar");
+    import("/assets/live.js?v=20261003a");
   </script>
 </body>
 </html>
