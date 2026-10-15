@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>تفعيل الويدجت — متجر أحمر</title>
+  <meta name="theme-color" content="#fbf6ec">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://backend.ah-mar.app" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/assets/style.css?v=20261003c">
+</head>
+<body>
+  <header id="top"></header>
+  <main class="wrap" id="main"><div class="panel"><div class="spinner" style="margin:24px auto"></div></div></main>
+  <footer id="foot"></footer>
+
+  <script type="module">
+    // Paper-book owners unlock the app's home-screen widget here. The check
+    // runs in the verify_paper_book function, which holds the answers and
+    // marks the account; the app picks the mark up on its next start.
+    import { mountLayout, getUser, api, openInAppUrl, esc, ICON, lang } from "/assets/app.js?v=20261003c";
+
+    const L = {
+      title: { ar: "تفعيل الويدجت", fr: "Activer le widget", en: "Unlock the widget" },
+      intro: { ar: "إن كنت تملك النسخة الورقية من رواية يّاش، أجب عن سؤال واحد من الكتاب ليُفتح لك ويدجت الشاشة الرئيسية في التطبيق.", fr: "Si vous possédez l'édition papier de Yash, répondez à une question tirée du livre pour débloquer le widget de l'application.", en: "If you own the paper edition of Yash, answer one question from the book to unlock the app's home-screen widget." },
+      ask: { ar: "افتح الكتاب على الصفحة {p}، واكتب الكلمة رقم {w} في الصفحة.", fr: "Ouvrez le livre à la page {p} et écrivez le mot n° {w} de la page.", en: "Open the book at page {p} and type word number {w} on that page." },
+      word: { ar: "الكلمة", fr: "Le mot", en: "The word" },
+      check: { ar: "تحقّق", fr: "Vérifier", en: "Check" },
+      wrong: { ar: "الإجابة غير صحيحة. جرّب سؤالاً آخر.", fr: "Réponse incorrecte. Essayez une autre question.", en: "That's not it. Try another question." },
+      other: { ar: "سؤال آخر", fr: "Une autre question", en: "Another question" },
+      done: { ar: "تم تفعيل الويدجت ✓", fr: "Widget activé ✓", en: "Widget unlocked ✓" },
+      doneP: { ar: "أعد فتح التطبيق بنفس الحساب، ثم أضف الويدجت إلى شاشتك الرئيسية.", fr: "Rouvrez l'application avec le même compte, puis ajoutez le widget à votre écran d'accueil.", en: "Reopen the app with the same account, then add the widget to your home screen." },
+      openApp: { ar: "افتح التطبيق", fr: "Ouvrir l'application", en: "Open the app" },
+      fail: { ar: "تعذّر الاتصال، حاول مجدداً.", fr: "Connexion impossible, réessayez.", en: "Couldn't connect, please try again." },
+    };
+    const tr = (k, vars = {}) => (L[k][lang] ?? L[k].ar).replace(/\{(\w)\}/g, (_, v) => vars[v]);
+
+    const main = document.getElementById("main");
+    document.title = `${tr("title")} — أحمر`;
+    const user = await getUser();
+    mountLayout();
+    if (!user) location.replace("/account.html?next=/widget.html");
+    else ask();
+
+    async function call(payload) {
+      const exec = await api("/functions/verify_paper_book/executions", {
+        method: "POST",
+        body: { body: JSON.stringify(payload), async: false, method: "POST", path: "/" },
+      });
+      return JSON.parse(exec.responseBody || "{}");
+    }
+
+    function showDone() {
+      main.innerHTML = `<div class="panel">
+        <h1>${tr("done")}</h1>
+        <p>${tr("doneP")}</p>
+        <a class="btn btn-green btn-block" href="${openInAppUrl()}">${ICON.phone}${tr("openApp")}</a>
+      </div>`;
+    }
+
+    async function ask() {
+      let q;
+      try { q = await call({ action: "question" }); }
+      catch { main.innerHTML = `<div class="panel"><p class="error">${tr("fail")}</p></div>`; return; }
+      if (q.unlocked) return showDone();
+
+      main.innerHTML = `<div class="panel">
+        <h1>${tr("title")}</h1>
+        <p>${tr("intro")}</p>
+        <form id="f" class="stack">
+          <p style="font-weight:600;margin:0">${esc(tr("ask", { p: q.page, w: q.word }))}</p>
+          <div class="field"><label for="a">${tr("word")}</label>
+            <input id="a" required autocomplete="off" dir="rtl"></div>
+          <button class="btn btn-primary btn-block" type="submit">${tr("check")}</button>
+        </form>
+        <p class="error" id="err"></p>
+        <button class="link hidden" type="button" id="again">${tr("other")}</button>
+      </div>`;
+
+      const form = document.getElementById("f");
+      const err = document.getElementById("err");
+      const again = document.getElementById("again");
+      again.onclick = ask;
+      form.onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = form.querySelector("button");
+        btn.disabled = true;
+        err.textContent = "";
+        try {
+          const r = await call({ action: "answer", id: q.id, answer: document.getElementById("a").value });
+          if (r.unlocked) return showDone();
+          err.textContent = tr("wrong");
+          form.classList.add("hidden");
+          again.classList.remove("hidden");
+        } catch {
+          err.textContent = tr("fail");
+          btn.disabled = false;
+        }
+      };
+    }
+  </script>
+</body>
+</html>
