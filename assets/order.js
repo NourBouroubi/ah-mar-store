@@ -62,7 +62,7 @@ const L = {
   loadFail: { ar: "تعذّر تحميل قائمة الولايات. أعد تحميل الصفحة.", fr: "Liste des wilayas indisponible. Rechargez la page.", en: "Couldn't load the wilaya list. Reload the page." },
   done: { ar: "وصلنا طلبك", fr: "Commande reçue", en: "Order received" },
   doneCode: { ar: "رقم الطلب", fr: "N° de commande", en: "Order number" },
-  doneCall: { ar: "سنتصل بك على {p} لتأكيد الطلب، ثم نرسله عبر EMS. احتفظ برقم الطلب.", fr: "Nous vous appellerons au {p} pour confirmer, puis nous expédions par EMS. Gardez ce numéro.", en: "We'll call you on {p} to confirm, then ship it with EMS. Keep this number." },
+  doneCall: { ar: "سنرسل كتابك عبر EMS إلى العنوان الذي كتبته. احتفظ برقم الطلب.", fr: "Nous expédions votre livre par EMS à l'adresse indiquée. Gardez ce numéro de commande.", en: "We'll ship your book with EMS to the address you gave. Keep this order number." },
   back: { ar: "العودة إلى المتجر", fr: "Retour à la boutique", en: "Back to the store" },
 };
 const tr = (k, vars = {}) => (L[k][lang] ?? L[k].ar).replace(/\{(\w)\}/g, (_, v) => vars[v] ?? "");
