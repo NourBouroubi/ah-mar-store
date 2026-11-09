@@ -142,6 +142,11 @@
 .pick img { width: 92px; height: auto; border-radius: 2px 5px 5px 2px; box-shadow: 0 8px 18px rgba(40, 25, 10, .35); filter: grayscale(.85) brightness(.75); transition: filter .5s ease, transform .5s cubic-bezier(.2, .7, .2, 1); }
 .pick.on { background: #fffaf0; border-color: #c49a55; box-shadow: 0 0 0 3px rgba(232, 189, 110, .25); }
 .pick.on img { filter: none; transform: translateY(-4px) rotate(-1.5deg); }
+.pick .left { font-size: .82rem; font-weight: 600; color: #8a5a1c; margin: -6px 0 8px; }
+.pick.sold { opacity: .7; }
+.pick.sold .left { color: var(--wax); }
+.pick.sold img { filter: grayscale(1) brightness(.6); }
+.pick.sold .stepper { opacity: .4; pointer-events: none; }
 .pick h3 { margin: 0; font-family: var(--serif); font-size: 1.25rem; line-height: 1.4; }
 .pick .pp { color: #6d5c4b; font-weight: 600; margin: 2px 0 10px; }
 .stepper { display: inline-flex; align-items: center; border: 1px solid rgba(60, 45, 30, .25); border-radius: 999px; background: #fffdf8; }

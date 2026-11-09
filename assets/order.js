@@ -16,6 +16,11 @@ const SHIPPING = { home: 750, office: 500 };
 const PART_ONE_ID = "697b52368bb7762720a3";
 const MAX_QTY = 10;
 const DRAFT_KEY = "ahmar_paper_draft";
+// Copies left of each part, from the «المخزون» tab of the owner's Google
+// Sheet (total copies minus every order that isn't cancelled). Read-only;
+// if it can't be reached, ordering stays open rather than blocking sales.
+const STOCK_URL = "https://script.google.com/macros/s/AKfycbymi6YKXTwoM9Ly-VmWQsp55mTMoYVuHiO3LlJ0wUWQ-loyJ62uy0U_f0TIu1Wbuys8/exec";
+const stock = { qty_part2: null, qty_part3: null };
 
 const L = {
   title: { ar: "يّاش على الورق — متجر أحمر", fr: "Yash en papier — Boutique Ahmar", en: "Yash in print — Ahmar Store" },
@@ -64,7 +69,18 @@ const L = {
   doneCode: { ar: "رقم الطلب", fr: "N° de commande", en: "Order number" },
   doneCall: { ar: "سنرسل كتابك عبر EMS إلى العنوان الذي كتبته. احتفظ برقم الطلب.", fr: "Nous expédions votre livre par EMS à l'adresse indiquée. Gardez ce numéro de commande.", en: "We'll ship your book with EMS to the address you gave. Keep this order number." },
   back: { ar: "العودة إلى المتجر", fr: "Retour à la boutique", en: "Back to the store" },
+  soldOut: { ar: "نفدت الكمية", fr: "Épuisé", en: "Sold out" },
+  allSold: { ar: "نفدت النسخ المتاحة حالياً", fr: "Plus aucun exemplaire disponible pour le moment", en: "No copies left for now" },
+  stockChanged: { ar: "تغيّرت الكمية المتاحة قبل قليل، راجع عدد النسخ ثم أرسل الطلب.", fr: "Le stock vient de changer : vérifiez les quantités puis renvoyez.", en: "Stock just changed: check the quantities, then send again." },
 };
+// "بقيت نسخة واحدة / نسختان / 3 نسخ / 11 نسخة"
+function leftText(n) {
+  if (lang === "fr") return n === 1 ? "Plus qu'un exemplaire" : `Plus que ${n} exemplaires`;
+  if (lang === "en") return n === 1 ? "Only 1 copy left" : `Only ${n} copies left`;
+  if (n === 1) return "بقيت نسخة واحدة";
+  if (n === 2) return "بقيت نسختان";
+  return n <= 10 ? `بقيت ${n} نسخ` : `بقيت ${n} نسخة`;
+}
 const tr = (k, vars = {}) => (L[k][lang] ?? L[k].ar).replace(/\{(\w)\}/g, (_, v) => vars[v] ?? "");
 const nf = new Intl.NumberFormat(lang === "ar" ? "ar-DZ" : lang === "fr" ? "fr-DZ" : "en-US");
 const money = (n) => `${nf.format(n)} ${lang === "ar" ? "دج" : "DA"}`;
@@ -88,6 +104,7 @@ $("picks").innerHTML = BOOKS.map((b) => `
     <div>
       <h3>${esc(b.title[lang] ?? b.title.ar)}</h3>
       <div class="pp">${money(b.price)}</div>
+      <div class="left" hidden></div>
       <div class="stepper" role="group" aria-label="${esc(tr("copies"))}">
         <button type="button" data-d="1" aria-label="+">+</button>
         <output aria-live="polite">0</output>
@@ -110,15 +127,46 @@ $("picks").addEventListener("click", (e) => {
   if (qty[key] === 0) setQty(key, 1);
 });
 
+const maxFor = (key) => (stock[key] == null ? MAX_QTY : Math.min(MAX_QTY, stock[key]));
+
 function setQty(key, n) {
-  qty[key] = Math.max(0, Math.min(MAX_QTY, n));
+  const max = maxFor(key);
+  qty[key] = Math.max(0, Math.min(max, n));
   const card = document.querySelector(`.pick[data-key="${key}"]`);
+  const sold = stock[key] === 0;
   card.classList.toggle("on", qty[key] > 0);
+  card.classList.toggle("sold", sold);
   card.querySelector("output").textContent = qty[key];
   card.querySelector('[data-d="-1"]').disabled = qty[key] === 0;
-  card.querySelector('[data-d="1"]').disabled = qty[key] === MAX_QTY;
+  card.querySelector('[data-d="1"]').disabled = qty[key] >= max;
+  const left = card.querySelector(".left");
+  const few = stock[key] != null && stock[key] > 0 && stock[key] <= 10;
+  left.hidden = !(sold || few);
+  left.textContent = sold ? tr("soldOut") : few ? leftText(stock[key]) : "";
   renderReceipt();
   saveDraft();
+}
+
+async function loadStock() {
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 8000);
+  try {
+    const r = await fetch(`${STOCK_URL}?t=${Date.now()}`, { signal: ctl.signal });
+    const d = await r.json();
+    if (!d.ok) return false;
+    stock.qty_part2 = Math.max(0, Number(d.part2) || 0);
+    stock.qty_part3 = Math.max(0, Number(d.part3) || 0);
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timer);
+  }
+  BOOKS.forEach((b) => setQty(b.key, qty[b.key]));
+  const allSold = BOOKS.every((b) => stock[b.key] === 0);
+  const btn = $("submit");
+  btn.disabled = allSold;
+  btn.textContent = allSold ? tr("allSold") : tr("submit");
+  return true;
 }
 
 /* ---------- Dedication ---------- */
@@ -259,6 +307,17 @@ form.addEventListener("submit", async (e) => {
   btn.disabled = true;
   btn.textContent = tr("sending");
 
+  // Re-read the stock just before ordering: someone may have taken the last
+  // copies since the page opened. If the sheet can't be reached, go ahead.
+  const asked = { ...qty };
+  if (await loadStock() && BOOKS.some((b) => asked[b.key] > maxFor(b.key))) {
+    err.textContent = tr("stockChanged");
+    $("picks").scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = tr("sending");
+
   const w = wilayas.find((x) => x[0] === Number(wSel.value));
   const c = w[3][Number(cSel.value)];
   const t = totals();
@@ -332,7 +391,7 @@ function showSealed(code, data, t) {
   document.getElementById("order").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-restoreDraft();
+restoreDraft().then(loadStock);
 renderReceipt();
 startRain();
 
