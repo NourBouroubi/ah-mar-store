@@ -34,7 +34,7 @@ const D = {
   store: { ar: "المتجر", fr: "Boutique", en: "Store" },
   signIn: { ar: "تسجيل الدخول", fr: "Se connecter", en: "Sign in" },
   myAccount: { ar: "حسابي", fr: "Mon compte", en: "My account" },
-  footerLine: { ar: "الكتب تُشترى هنا وتُقرأ في التطبيق.", fr: "Les livres s'achètent ici et se lisent dans l'application.", en: "Books are bought here and read in the app." },
+  footerLine: { ar: "اقرأ كتبك في تطبيق أحمر على Android وiPhone وiPad.", fr: "Lisez vos livres dans l'application Ahmar sur Android, iPhone et iPad.", en: "Read your books in the Ahmar app on Android, iPhone and iPad." },
   terms: { ar: "الشروط", fr: "Conditions", en: "Terms" },
   privacy: { ar: "الخصوصية", fr: "Confidentialité", en: "Privacy" },
   refund: { ar: "الاسترجاع", fr: "Remboursement", en: "Refunds" },
@@ -52,9 +52,9 @@ const D = {
   step3: { ar: "افتح التطبيق واقرأ", fr: "Ouvrez l'application et lisez", en: "Open the app and read" },
   iosTitle: { ar: "تستعمل iPhone أو iPad؟", fr: "Vous êtes sur iPhone ou iPad ?", en: "On iPhone or iPad?" },
   iosBody: {
-    ar: "لا يمكن شراء الكتب من داخل تطبيق أحمر على iOS. اشترِ كتبك من هذا المتجر بالحساب نفسه، وستجدها فوراً في مكتبتك داخل التطبيق.",
-    fr: "Les livres ne peuvent pas être achetés dans l'application Ahmar sur iOS. Achetez-les sur cette boutique avec le même compte : ils apparaissent aussitôt dans votre bibliothèque.",
-    en: "Books can't be bought inside the Ahmar app on iOS. Buy them here with the same account and they appear in your in-app library right away.",
+    ar: "يمكنك شراء الكتب من داخل تطبيق أحمر عبر App Store. وكل كتاب تملكه بحسابك يظهر في مكتبتك على جميع أجهزتك.",
+    fr: "Vous pouvez acheter les livres directement dans l'application Ahmar via l'App Store. Chaque livre de votre compte apparaît dans votre bibliothèque sur tous vos appareils.",
+    en: "You can buy books right inside the Ahmar app through the App Store. Every book on your account shows up in your library on all your devices.",
   },
   search: { ar: "ابحث عن كتاب أو كاتب", fr: "Rechercher un livre ou un auteur", en: "Search books or authors" },
   categories: { ar: "التصنيفات", fr: "Catégories", en: "Categories" },
@@ -94,7 +94,7 @@ const D = {
   pay: { ar: "ادفع", fr: "Payer", en: "Pay" },
   securePay: { ar: "دفع آمن عبر Chargily", fr: "Paiement sécurisé via Chargily", en: "Secure payment by Chargily" },
   instant: { ar: "يصل الكتاب فوراً", fr: "Livraison immédiate", en: "Instant delivery" },
-  iosShort: { ar: "على iPhone وiPad تتم المشتريات من هنا فقط، ويظهر الكتاب في التطبيق تلقائياً.", fr: "Sur iPhone et iPad, les achats se font uniquement ici ; le livre apparaît ensuite dans l'application.", en: "On iPhone and iPad, purchases are made here only; the book then shows up in the app." },
+  iosShort: { ar: "على iPhone وiPad يمكنك شراء هذا الكتاب من داخل التطبيق عبر App Store.", fr: "Sur iPhone et iPad, vous pouvez acheter ce livre dans l'application via l'App Store.", en: "On iPhone and iPad, you can buy this book inside the app through the App Store." },
   payFail: { ar: "تعذّر بدء الدفع. حاول مرة أخرى بعد قليل.", fr: "Impossible de lancer le paiement. Réessayez dans un instant.", en: "Couldn't start the payment. Please try again shortly." },
 
   // ---- account ----
