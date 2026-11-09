@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="/assets/style.css?v=20261109b">
+  <link rel="stylesheet" href="/assets/style.css?v=20261109c">
 </head>
 <body>
   <header id="top"></header>
@@ -32,6 +32,11 @@
         <span id="apple-icon"></span>
         <div><b data-i18n="iosTitle"></b><p data-i18n="iosBody"></p></div>
       </div>
+      <a class="paper-promo" href="/order.html">
+        <span class="pp-covers" aria-hidden="true"><img src="/assets/yash-2.jpg" alt="" width="64" height="92"><img src="/assets/yash-3.jpg" alt="" width="64" height="92"></span>
+        <span class="pp-text"><b data-i18n="paperTitle"></b><small data-i18n="paperBody"></small></span>
+        <span class="btn btn-sm pp-btn" data-i18n="paperCta"></span>
+      </a>
     </section>
 
     <section class="wrap">
@@ -48,7 +53,7 @@
   <footer id="foot"></footer>
 
   <script type="module">
-    import { mountLayout, getCatalog, getUser, getOwnedIds, coverUrl, bookUrl, formatPrice, esc, ICON, t } from "/assets/app.js?v=20261109b";
+    import { mountLayout, getCatalog, getUser, getOwnedIds, coverUrl, bookUrl, formatPrice, esc, ICON, t } from "/assets/app.js?v=20261109c";
 
     mountLayout();
     document.title = t("metaTitle");

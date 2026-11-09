@@ -7,7 +7,7 @@
 //  * reaction  -> atomic increment on live_reaction_counts
 //  * presence  -> heartbeat upsert in live_presence (doc id = user id)
 
-import { CFG, api, getUser, getCatalog, getOwnedIds, signInWithGoogle, esc, toast, t, lang } from "/assets/app.js?v=20261109b";
+import { CFG, api, getUser, getCatalog, getOwnedIds, signInWithGoogle, esc, toast, t, lang } from "/assets/app.js?v=20261109c";
 
 // Self-hosted: jsDelivr's own +esm build of this SDK imports
 // "/npm/sdp-transform@2.15.0/+esm", which jsDelivr cannot build (404 -- the

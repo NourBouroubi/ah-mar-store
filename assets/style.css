@@ -305,3 +305,26 @@ main { flex: 1; }
 .react:active { transform: scale(.9); }
 .float-react { position: fixed; font-size: 1.6rem; pointer-events: none; animation: floatup 1.6s ease-out forwards; z-index: 50; }
 @keyframes floatup { to { transform: translateY(-160px) scale(1.3); opacity: 0; } }
+
+/* ---------- Paper edition (links to /order.html) ---------- */
+.paper-promo {
+  display: flex; align-items: center; gap: 16px; margin-top: 14px; max-width: 720px;
+  background: #1d1915; color: #efe7d8; border-radius: var(--radius); padding: 14px 18px;
+  box-shadow: 0 10px 30px rgba(20, 17, 15, .25);
+}
+.pp-covers { display: flex; flex: none; }
+.pp-covers img { width: 44px; height: auto; border-radius: 2px 4px 4px 2px; box-shadow: 0 6px 14px rgba(0, 0, 0, .5); }
+.pp-covers img + img { margin-inline-start: -14px; transform: rotate(-5deg) translateY(3px); }
+.pp-text { flex: 1; min-width: 0; }
+.pp-text b { display: block; font-size: 1.05rem; }
+.pp-text small { color: #b9afa3; font-size: .88rem; line-height: 1.5; display: block; }
+.pp-btn { background: #efe7d8; color: #1d1915; }
+.paper-promo:hover .pp-btn { background: #fff; }
+@media (max-width: 520px) { .pp-btn { display: none; } }
+.paper-link {
+  display: flex; align-items: center; gap: 12px; margin: -12px 0 28px; padding: 10px 14px;
+  border: 1px solid var(--line); border-radius: 12px; background: #1d1915; color: #efe7d8;
+}
+.paper-link img { width: 34px; height: auto; border-radius: 2px; }
+.paper-link b { display: block; font-size: .95rem; }
+.paper-link small { color: #b9afa3; font-size: .82rem; }

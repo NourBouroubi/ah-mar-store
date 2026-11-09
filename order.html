@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>يّاش على الورق — متجر أحمر</title>
+  <meta name="description" content="اطلب النسخة الورقية من رواية يّاش، الجزء الثاني والثالث، مع إهداء بالاسم الذي تختاره. التوصيل عبر EMS إلى كل الولايات والدفع عند الاستلام.">
+  <meta name="theme-color" content="#14110f">
+  <meta property="og:title" content="يّاش على الورق">
+  <meta property="og:description" content="الجزء الثاني والثالث من رواية يّاش بنسختهما الورقية، مع إهداء باسمك. توصيل EMS لكل الولايات.">
+  <meta property="og:image" content="https://store.ah-mar.app/assets/yash-3.jpg">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://backend.ah-mar.app" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+  <link rel="preload" as="image" href="/assets/yash-3.jpg">
+  <link rel="stylesheet" href="/assets/style.css?v=20261109c">
+  <link rel="stylesheet" href="/assets/order.css?v=20261109c">
+</head>
+<body class="noir">
+  <header id="top"></header>
+  <main>
+    <section class="o-hero">
+      <canvas class="rain" id="rain" aria-hidden="true"></canvas>
+      <div class="o-hero-in wrap">
+        <div class="o-hero-text">
+          <h1 data-l="heroTitle"></h1>
+          <p data-l="heroBody"></p>
+          <a class="btn o-cta" href="#order" data-l="heroCta"></a>
+        </div>
+        <div class="o-stack" aria-hidden="true">
+          <img class="o-book o-book-2" src="/assets/yash-2.jpg" alt="" width="640" height="917">
+          <img class="o-book o-book-3" src="/assets/yash-3.jpg" alt="" width="640" height="909">
+          <div class="o-lamp"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="o-first">
+        <img src="/assets/yash-1.jpg" alt="" width="240" height="344" loading="lazy">
+        <div>
+          <b data-l="firstTitle"></b>
+          <p data-l="firstBody"></p>
+        </div>
+        <a class="btn o-ghost" id="first-link" data-l="firstCta"></a>
+      </div>
+    </section>
+
+    <section class="wrap o-main" id="order">
+      <form class="sheet" id="form" novalidate>
+        <section class="o-step" role="group" aria-labelledby="st1">
+          <h2 id="st1"><span class="o-n">1</span><span data-l="s1"></span></h2>
+          <div class="o-picks" id="picks"></div>
+          <p class="error" id="err-books"></p>
+        </section>
+
+        <section class="o-step" role="group" aria-labelledby="st2">
+          <h2 id="st2"><span class="o-n">2</span><span data-l="s2"></span></h2>
+          <div class="o-ded">
+            <div class="field">
+              <label for="dedication" data-l="dedLabel"></label>
+              <input id="dedication" name="dedication" maxlength="60" autocomplete="off" dir="auto">
+              <small class="muted" data-l="dedHint"></small>
+            </div>
+            <div class="flyleaf" aria-hidden="true">
+              <div class="flyleaf-page flyleaf-l"></div>
+              <div class="flyleaf-page flyleaf-r">
+                <div class="ink" id="ink"><span data-l="dedTo"></span> <span id="ink-name"></span></div>
+                <svg class="flourish" viewBox="0 0 160 20"><path d="M4 12c30-10 60 8 92-2s48-6 60 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="o-step" role="group" aria-labelledby="st3">
+          <h2 id="st3"><span class="o-n">3</span><span data-l="s3"></span></h2>
+          <div class="o-ship" role="radiogroup" id="ship">
+            <label class="o-opt"><input type="radio" name="delivery" value="home" checked><span><b data-l="home"></b><small data-l="homeSub"></small></span><em id="price-home"></em></label>
+            <label class="o-opt"><input type="radio" name="delivery" value="office"><span><b data-l="office"></b><small data-l="officeSub"></small></span><em id="price-office"></em></label>
+          </div>
+        </section>
+
+        <section class="o-step" role="group" aria-labelledby="st4">
+          <h2 id="st4"><span class="o-n">4</span><span data-l="s4"></span></h2>
+          <div class="o-grid">
+            <div class="field"><label for="first_name" data-l="firstName"></label><input id="first_name" name="first_name" maxlength="60" autocomplete="given-name" required><p class="error"></p></div>
+            <div class="field"><label for="last_name" data-l="lastName"></label><input id="last_name" name="last_name" maxlength="60" autocomplete="family-name" required><p class="error"></p></div>
+            <div class="field o-wide"><label for="phone" data-l="phone"></label><input id="phone" name="phone" type="tel" inputmode="tel" maxlength="20" autocomplete="tel" dir="ltr" placeholder="0555 12 34 56" required><p class="error"></p></div>
+            <div class="field"><label for="wilaya" data-l="wilaya"></label><select id="wilaya" name="wilaya" required></select><p class="error"></p></div>
+            <div class="field"><label for="commune" data-l="commune"></label><select id="commune" name="commune" required disabled></select><p class="error"></p></div>
+            <div class="field o-wide"><label for="address" data-l="address"></label><textarea id="address" name="address" rows="2" maxlength="300" autocomplete="street-address" required></textarea><p class="error"></p></div>
+          </div>
+        </section>
+      </form>
+
+      <aside class="receipt" id="receipt">
+        <h2 data-l="summary"></h2>
+        <ul id="lines"></ul>
+        <div class="r-total"><span data-l="total"></span><b id="total"></b></div>
+        <p class="r-cod"><span data-l="cod"></span></p>
+        <button class="btn btn-primary btn-block" type="submit" form="form" id="submit" data-l="submit"></button>
+        <p class="error" id="err-submit"></p>
+        <p class="muted r-ems" data-l="emsNote"></p>
+      </aside>
+    </section>
+  </main>
+  <footer id="foot"></footer>
+
+  <script type="module" src="/assets/order.js?v=20261109c"></script>
+</body>
+</html>

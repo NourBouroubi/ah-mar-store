@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="/assets/style.css?v=20261109b">
+  <link rel="stylesheet" href="/assets/style.css?v=20261109c">
 </head>
 <body>
   <header id="top"></header>
@@ -24,8 +24,14 @@
   <footer id="foot"></footer>
 
   <script type="module">
-    import { mountLayout, getCatalog, getUser, getOwnedIds, startCheckout, coverUrl, formatPrice, currency, openInAppUrl, esc, toast, ICON, t, usdCents, formatUsd, paddleEnabled, loadPaddle, lang } from "/assets/app.js?v=20261109b";
+    import { mountLayout, getCatalog, getUser, getOwnedIds, startCheckout, coverUrl, formatPrice, currency, openInAppUrl, esc, toast, ICON, t, usdCents, formatUsd, paddleEnabled, loadPaddle, lang } from "/assets/app.js?v=20261109c";
 
+    // The parts that also exist in print link to the paper order page.
+    const PAPER = { "697b5274cbe80912fba7": "2", "6adcfa7a15fb42cc5af0": "3" };
+    const PAPER_L = {
+      t: { ar: "تفضّل النسخة الورقية؟", fr: "Vous préférez le papier ?", en: "Prefer it in print?" },
+      s: { ar: "اطلبها مع إهداء باسمك، توصيل EMS لكل الولايات", fr: "Commandez-la dédicacée, livraison EMS partout en Algérie", en: "Order it dedicated to you, EMS delivery across Algeria" },
+    };
     mountLayout();
     const main = document.getElementById("main");
     const id = new URLSearchParams(location.search).get("id") || "";
@@ -60,6 +66,7 @@
           ${book.author ? `<div class="by">${esc(book.author)}</div>` : ""}
           <div class="meta">${meta.map((m) => `<span>${esc(m)}</span>`).join("")}</div>
           <div class="buy-box" id="buy"></div>
+          ${PAPER[book.id] ? `<a class="paper-link" href="/order.html?book=${PAPER[book.id]}"><img src="/assets/yash-${PAPER[book.id]}.jpg" alt="" width="40" height="58"><span><b>${PAPER_L.t[lang] ?? PAPER_L.t.ar}</b><small>${PAPER_L.s[lang] ?? PAPER_L.s.ar}</small></span></a>` : ""}
           ${book.description ? `<div class="desc"><h2>${t("about")}</h2><div dir="auto">${esc(book.description)}</div></div>` : ""}
         </div>
       </div>`;
