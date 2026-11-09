@@ -5,7 +5,7 @@
 // confirms every order by phone before it ships; the admin app recomputes the
 // total from the quantities rather than trusting the figures stored here.
 
-import { mountLayout, getUser, api, CFG, openInAppUrl, esc, lang } from "/assets/app.js?v=20261109c";
+import { mountLayout, getUser, api, CFG, openInAppUrl, esc, lang } from "/assets/app.js?v=20261109f";
 
 const V = "20261109c";
 const BOOKS = [

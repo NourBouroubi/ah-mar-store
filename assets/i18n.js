@@ -1,5 +1,6 @@
 // Three languages: Arabic (default, RTL), French and English (LTR).
-// The choice comes from ?lang=, then the last one picked, then the browser.
+// Arabic unless the visitor asks otherwise: ?lang= in the link, or the
+// language they picked last in the menu. The browser's language is ignored.
 
 export const LANGS = { ar: "العربية", fr: "Français", en: "English" };
 const KEY = "ahmar_lang";
@@ -11,10 +12,6 @@ function pick() {
     const saved = localStorage.getItem(KEY);
     if (saved && LANGS[saved]) return saved;
   } catch {}
-  for (const l of navigator.languages || [navigator.language || ""]) {
-    const code = l.slice(0, 2).toLowerCase();
-    if (LANGS[code]) return code;
-  }
   return "ar";
 }
 
