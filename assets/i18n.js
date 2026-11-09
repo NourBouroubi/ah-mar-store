@@ -44,8 +44,8 @@ const D = {
 
   // ---- home ----
   metaTitle: { ar: "متجر أحمر — كتب إلكترونية تقرؤها في تطبيق أحمر", fr: "Boutique Ahmar — des ebooks à lire dans l'application Ahmar", en: "Ahmar Store — ebooks you read in the Ahmar app" },
-  heroA: { ar: "كتب تشتريها هنا،", fr: "Achetez vos livres ici,", en: "Buy your books here," },
-  heroB: { ar: "وتقرؤها في تطبيق أحمر.", fr: "lisez-les dans l'application Ahmar.", en: "read them in the Ahmar app." },
+  heroA: { ar: "كتب عربية جديدة،", fr: "De nouveaux livres arabes,", en: "New Arabic books," },
+  heroB: { ar: "تقرؤها في تطبيق أحمر على كل أجهزتك.", fr: "à lire dans l'application Ahmar, sur tous vos appareils.", en: "to read in the Ahmar app on all your devices." },
   heroP: { ar: "ادفع بالبطاقة الذهبية أو CIB، ويصل الكتاب إلى مكتبتك في التطبيق خلال ثوانٍ.", fr: "Payez par carte Edahabia ou CIB : le livre arrive dans votre bibliothèque en quelques secondes.", en: "Pay with an Edahabia or CIB card and the book lands in your in-app library within seconds." },
   step1: { ar: "سجّل دخولك بحساب التطبيق نفسه", fr: "Connectez-vous avec votre compte de l'application", en: "Sign in with your app account" },
   step2: { ar: "اختر كتابك وادفع", fr: "Choisissez et payez", en: "Pick a book and pay" },
