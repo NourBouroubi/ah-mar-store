@@ -50,24 +50,31 @@
 
 .o-stack { position: relative; height: clamp(300px, 62vw, 470px); perspective: 1200px; }
 .o-book {
-  position: absolute; top: 50%; width: auto; height: 86%;
-  aspect-ratio: 2 / 2.86; object-fit: cover; border-radius: 3px 7px 7px 3px;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, .65), 0 2px 0 rgba(255, 255, 255, .04) inset;
+  position: absolute; top: 50%; height: 86%; aspect-ratio: 2 / 2.86;
+  border-radius: 3px 7px 7px 3px; overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, .65);
 }
+.o-book img { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* A soft gleam that crosses each cover once, clipped to the cover itself,
+   like the window light on part two passing over the books. */
+.o-book::after {
+  content: ""; position: absolute; inset: -20% -60%; pointer-events: none;
+  background: linear-gradient(100deg, transparent 38%, rgba(255, 232, 190, .10) 45%, rgba(255, 236, 200, .26) 50%, rgba(255, 232, 190, .10) 55%, transparent 62%);
+  mix-blend-mode: screen; transform: translateX(-75%);
+  animation: sheen 1.9s cubic-bezier(.45, .05, .35, 1) both;
+}
+.o-book-2::after { animation-delay: 1.7s; }
+.o-book-3::after { animation-delay: 2.1s; }
+[dir="rtl"] .o-book::after { transform: translateX(75%); animation-name: sheenRtl; }
 .o-book-2 { inset-inline-end: 44%; transform: translateY(-50%) rotate(-7deg); animation: emerge2 1.6s .35s cubic-bezier(.2, .7, .2, 1) both; }
 .o-book-3 { inset-inline-end: 10%; transform: translateY(-46%) rotate(4deg); animation: emerge3 1.6s .7s cubic-bezier(.2, .7, .2, 1) both; }
 [dir="rtl"] .o-book-2 { transform: translateY(-50%) rotate(7deg); animation-name: emerge2r; }
 [dir="rtl"] .o-book-3 { transform: translateY(-46%) rotate(-4deg); animation-name: emerge3r; }
-.o-lamp {
-  /* the sweep of light that lights the covers once, on arrival */
-  position: absolute; inset: 0; pointer-events: none; mix-blend-mode: soft-light;
-  background: linear-gradient(105deg, transparent 30%, rgba(255, 226, 170, .55) 48%, transparent 62%);
-  background-size: 260% 100%; animation: sweep 2.6s 1.2s ease-in-out both;
-}
 
 @keyframes rise { from { opacity: 0; transform: translateY(18px); } }
 @keyframes lampIn { from { opacity: 0; } }
-@keyframes sweep { from { background-position: 120% 0; } to { background-position: -40% 0; opacity: 0; } }
+@keyframes sheen { from { transform: translateX(-75%); } to { transform: translateX(75%); } }
+@keyframes sheenRtl { from { transform: translateX(75%); } to { transform: translateX(-75%); } }
 @keyframes emerge2 { from { opacity: 0; filter: brightness(.15) blur(6px); transform: translateY(-38%) rotate(-12deg); } }
 @keyframes emerge3 { from { opacity: 0; filter: brightness(.15) blur(6px); transform: translateY(-34%) rotate(9deg); } }
 @keyframes emerge2r { from { opacity: 0; filter: brightness(.15) blur(6px); transform: translateY(-38%) rotate(12deg); } }
@@ -203,6 +210,6 @@
 @keyframes stamp { from { opacity: 0; transform: scale(2.4) rotate(-25deg); } 60% { opacity: 1; } to { transform: scale(1) rotate(-8deg); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .noir *, .noir *::before { animation: none !important; transition: none !important; }
+  .noir *, .noir *::before, .noir *::after { animation: none !important; transition: none !important; }
   .rain { display: none; }
 }

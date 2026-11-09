@@ -20,7 +20,7 @@ const DRAFT_KEY = "ahmar_paper_draft";
 const L = {
   title: { ar: "يّاش على الورق — متجر أحمر", fr: "Yash en papier — Boutique Ahmar", en: "Yash in print — Ahmar Store" },
   heroTitle: { ar: "يّاش على الورق", fr: "Yash, en papier", en: "Yash, in print" },
-  heroBody: { ar: "الجزء الثاني والثالث بنسختهما الورقية، مع إهداء بالاسم الذي تختاره، يصلانك عبر EMS إلى بيتك أو إلى أقرب مكتب.", fr: "Les tomes 2 et 3 en édition papier, avec une dédicace au nom de votre choix, livrés par EMS chez vous ou au bureau le plus proche.", en: "Parts two and three in print, dedicated to the name you choose, delivered by EMS to your door or the nearest office." },
+  heroBody: { ar: "النسخة الورقية ستكون بين يديك.", fr: "L'édition papier, bientôt entre vos mains.", en: "The print edition, soon in your hands." },
   heroCta: { ar: "اطلب نسختك", fr: "Commander", en: "Order your copy" },
   firstTitle: { ar: "الجزء الأول إلكتروني فقط", fr: "Le tome 1 existe uniquement en numérique", en: "Part one is digital only" },
   firstBody: { ar: "لا تتوفّر له نسخة ورقية. تقرؤه كاملاً في تطبيق أحمر.", fr: "Il n'a pas d'édition papier : lisez-le en entier dans l'application Ahmar.", en: "There's no print edition. Read it in full in the Ahmar app." },
@@ -53,7 +53,7 @@ const L = {
   cod: { ar: "الدفع نقداً عند الاستلام.", fr: "Paiement en espèces à la livraison.", en: "Pay cash on delivery." },
   submit: { ar: "أرسل الطلب", fr: "Envoyer la commande", en: "Send the order" },
   sending: { ar: "جارٍ الإرسال…", fr: "Envoi…", en: "Sending…" },
-  emsNote: { ar: "نتصل بك لتأكيد الطلب قبل إرساله عبر EMS.", fr: "Nous vous appelons pour confirmer avant l'expédition par EMS.", en: "We call you to confirm before shipping with EMS." },
+  emsNote: { ar: "تأكّد من قدرتك على استلام الكتاب قبل تأكيد الطلب.", fr: "Assurez-vous de pouvoir réceptionner le livre avant de confirmer la commande.", en: "Make sure you can receive the book before confirming your order." },
   needBook: { ar: "اختر جزءاً واحداً على الأقل.", fr: "Choisissez au moins un tome.", en: "Choose at least one book." },
   required: { ar: "هذه الخانة مطلوبة.", fr: "Ce champ est requis.", en: "This field is required." },
   badPhone: { ar: "اكتب رقماً جزائرياً من 10 أرقام، مثل 0555123456.", fr: "Numéro algérien à 10 chiffres, ex. 0555123456.", en: "Enter a 10-digit Algerian number, e.g. 0555123456." },
